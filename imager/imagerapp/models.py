@@ -1,22 +1,22 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
-
-
-
-# Already in:
+# Already in User:
 # username,
 # password,
 # date joined,
 # email address,
 # active,
 
+
 class UserProfile(models.Model):
+    """Thise sets up a User Profile with privacy settings."""
     PRIVACY_CHOICES = (
         ('PR', 'Private'),
         ('PU', 'Public'),
     )
-    picture = models.CharField(max_length=200) # change this to image
+
+    picture = models.ImageField()
     pic_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
     birthday = models.DateField()
     birthday_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
@@ -25,4 +25,7 @@ class UserProfile(models.Model):
     name_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
     email_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES)
 
+    user = models.OneToOneField(User)
 
+    def __unicode__(self):
+        return self.user
