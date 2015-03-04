@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import datetime
 # from django.db.models.signals import post_save, pre_delete
 
 # Already in User:
@@ -20,7 +20,7 @@ class ImagerProfile(models.Model):
 
     # new fields
     picture = models.ImageField()
-    birthday = models.DateField()
+    birthday = models.DateField(default=datetime.date.today())
     phone = models.IntegerField(max_length=11)
 
     # privacy settings
