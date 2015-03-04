@@ -48,7 +48,6 @@ class ImagerProfile(models.Model):
         return self.user.is_active
 
     def __unicode__(self):
-        import pdb; pdb.set_trace()
         return self.user.username
 
 # create and delete 
