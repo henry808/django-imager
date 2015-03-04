@@ -44,6 +44,7 @@ class ImagerProfile(models.Model):
 #   qs = self.get_queryset()
 #   return qs.filter(associated)
 
+    @property
     def is_active(self):
         return self.user.is_active
 
