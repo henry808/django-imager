@@ -40,7 +40,7 @@ class ImagerProfile(models.Model):
     @classmethod
     def active(cls):
         """Returns all active users."""
-        return User.objects.all().filter(is_active=True)
+        return cls.objects.all().filter(is_active=True)
 #   qs = self.get_queryset()
 #   return qs.filter(associated)
 
@@ -49,7 +49,7 @@ class ImagerProfile(models.Model):
 
     def __unicode__(self):
         import pdb; pdb.set_trace()
-        return self.user
+        return self.user.username
 
 # create and delete 
 # post_save.connect(create_profile, send=User)
