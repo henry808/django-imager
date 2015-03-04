@@ -37,10 +37,10 @@ class ImagerProfile(models.Model):
     # associates profile to the User model
     user = models.OneToOneField(User)
 
-    @classmethod
-    def active(cls):
+    @staticmethod
+    def active():
         """Returns all active users."""
-        return cls.objects.all().filter(is_active=True)
+        return User.objects.all().filter(is_active=True)
 #   qs = self.get_queryset()
 #   return qs.filter(associated)
 
@@ -50,7 +50,7 @@ class ImagerProfile(models.Model):
     def __unicode__(self):
         return self.user.username
 
-# create and delete 
+# create and delete
 # post_save.connect(create_profile, send=User)
 # pre_delete.connect(delete_user, sender=ImagerProfile)
 
