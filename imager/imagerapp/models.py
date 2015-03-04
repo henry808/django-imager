@@ -23,35 +23,32 @@ class ImagerProfile(models.Model):
     birthday = models.DateField()
     phone = models.IntegerField(max_length=11)
 
-
     # privacy settings
-    pic_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES,
-                                   default=('PR', 'Private'))
-    birthday_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES,
-                                        default=('PR', 'Private'))
-    phone_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES,
-                                     default=('PR', 'Private'))
-    name_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES,
-                                    default=('PR', 'Private'))
-    email_privacy = models.CharField(max_length=1, choices=PRIVACY_CHOICES,
-                                     default=('PR', 'Private'))
+    pic_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
+                                   default='PR')
+    birthday_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
+                                        default='PR')
+    phone_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
+                                     default='PR')
+    name_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
+                                    default='PR')
+    email_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
+                                     default='PR')
     # associates profile to the User model
     user = models.OneToOneField(User)
 
     @classmethod
     def active(cls):
         """Returns all active users."""
-        return User.objects.filter(is_active=True)
+        return User.objects.all().filter(is_active=True)
 #   qs = self.get_queryset()
 #   return qs.filter(associated)
 
     def is_active(self):
         return self.user.is_active
 
-    def user(self):
-        return self.user
-
     def __unicode__(self):
+        import pdb; pdb.set_trace()
         return self.user
 
 # create and delete 
