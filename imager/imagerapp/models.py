@@ -36,6 +36,10 @@ class ImagerProfile(models.Model):
                                      default='PR')
     # associates profile to the User model
     user = models.OneToOneField(User)
+    # import pdb; pdb.set_trace()
+    # need to: set is so that it grabs the value of user.is_active dynamically
+    # at creation as well as change in user.is_active
+    # is_active = models.BooleanField(default=True)
 
     @classmethod
     def active(cls):
@@ -46,7 +50,8 @@ class ImagerProfile(models.Model):
 
     @property
     def is_active(self):
-        return self.user.is_active
+        self.is_active = self.user.is_active
+        return self.is_active
 
     def __unicode__(self):
         return self.user.username
