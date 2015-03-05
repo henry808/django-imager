@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import datetime
 # from django.db.models.signals import post_save, pre_delete
 
 # Already in User:
@@ -20,7 +20,7 @@ class ImagerProfile(models.Model):
 
     # new fields
     picture = models.ImageField()
-    birthday = models.DateField()
+    birthday = models.DateField(default=datetime.date.today())
     phone = models.IntegerField(max_length=11)
 
     # privacy settings
@@ -41,10 +41,10 @@ class ImagerProfile(models.Model):
     # at creation as well as change in user.is_active
     # is_active = models.BooleanField(default=True)
 
-    @classmethod
-    def active(cls):
+    @staticmethod
+    def active():
         """Returns all active users."""
-        return cls.objects.all().filter(is_active=True)
+        return User.objects.all().filter(is_active=True)
 #   qs = self.get_queryset()
 #   return qs.filter(associated)
 
@@ -56,7 +56,7 @@ class ImagerProfile(models.Model):
     def __unicode__(self):
         return self.user.username
 
-# create and delete 
+# create and delete
 # post_save.connect(create_profile, send=User)
 # pre_delete.connect(delete_user, sender=ImagerProfile)
 
