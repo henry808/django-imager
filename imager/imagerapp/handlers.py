@@ -12,6 +12,11 @@ def imager_signal_handler(sender, **kwargs):
     new.is_active = kwargs['instance'].is_active
 
     # Prevent an already existing profile from trying to save anew
-    # TODO: else, update profile accordingly
-    if not ImagerProfile.objects.all().filter(user_id=new.user):
+    # else, update existing profile accordingly
+    already_matched = ImagerProfile.objects.get(user_id=new.user)
+    # import pdb; pdb.set_trace()
+    if not already_matched:
         new.save()
+    else:
+        already_matched.is_active = kwargs['instance'].is_active
+        already_matched.save()
