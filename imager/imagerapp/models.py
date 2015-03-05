@@ -11,6 +11,11 @@ import datetime
 # active,
 
 
+class ActiveManager(models.Manager):
+    def all(self):
+        return User.objects.all().filter(is_active=True)
+
+
 class ImagerProfile(models.Model):
     """Thise sets up a User Profile with privacy settings."""
     PRIVACY_CHOICES = (
@@ -36,27 +41,23 @@ class ImagerProfile(models.Model):
                                      default='PR')
     # associates profile to the User model
     user = models.OneToOneField(User)
-    # import pdb; pdb.set_trace()
-    # need to: set is so that it grabs the value of user.is_active dynamically
-    # at creation as well as change in user.is_active
-    # is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
-    @staticmethod
-    def active():
-        """Returns all active users."""
-        return User.objects.all().filter(is_active=True)
-#   qs = self.get_queryset()
-#   return qs.filter(associated)
+    # Managers
+    objects = models.Manager()
+    active = ActiveManager()
 
-    @property
-    def is_active(self):
-        self.is_active = self.user.is_active
-        return self.is_active
+    # @staticmethod
+    # def active():
+    #     """Returns all active users."""
+    #     return User.objects.all().filter(is_active=True)
+    # qs = self.get_queryset()
+    # return qs.filter(associated)
+
+    # @property
+    # def is_active(self):
+    #     self.is_active = self.user.is_active
+    #     return self.is_active
 
     def __unicode__(self):
         return self.user.username
-
-# create and delete
-# post_save.connect(create_profile, send=User)
-# pre_delete.connect(delete_user, sender=ImagerProfile)
-

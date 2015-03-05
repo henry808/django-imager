@@ -6,14 +6,12 @@ from imagerapp.models import ImagerProfile
 
 @receiver(post_save, sender=User)
 def imager_signal_handler(sender, **kwargs):
-    if not kwargs['update_fields']:
-        import pdb; pdb.set_trace()
-        new = ImagerProfile()
-        new.user = kwargs['instance']
+    # import pdb; pdb.set_trace()
+    new = ImagerProfile()
+    new.user = kwargs['instance']
+    new.is_active = kwargs['instance'].is_active
+
+    # Prevent an already existing profile from trying to save anew
+    # TODO: else, update profile accordingly
+    if not ImagerProfile.objects.all().filter(user_id=new.user):
         new.save()
-    print
-    print sender
-    print kwargs
-    print
-    print
-    print
