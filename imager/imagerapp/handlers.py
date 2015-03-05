@@ -6,8 +6,11 @@ from imagerapp.models import ImagerProfile
 
 @receiver(post_save, sender=User)
 def imager_signal_handler(sender, **kwargs):
-    new = ImagerProfile()
-    new.save()
+    if not kwargs['update_fields']:
+        import pdb; pdb.set_trace()
+        new = ImagerProfile()
+        new.user = kwargs['instance']
+        new.save()
     print
     print sender
     print kwargs
