@@ -59,13 +59,24 @@ class ImagerTestCase(TestCase):
         self.assertEqual(isinstance(bill_str, str), True)
         self.assertEqual(isinstance(bill_unicode, unicode), True)
 
+    # Tests for following
+    # Following/followers empty case
+    def test_followers_empty(self):
+        bill = User.objects.get(username='bill').profile
+        sally = User.objects.get(username='sally').profile
+        self.assertEqual(bool(bill.followers), False)
+        self.assertEqual(bool(sally.followers), False)
 
-# Tests for following
+    def test_following_empty(self):
+        bill = User.objects.get(username='bill').profile
+        sally = User.objects.get(username='sally').profile
+        self.assertEqual(bill.following.count(), 0)
+        self.assertEqual(sally.following.count(), 0)
+
     def test_follow(self):
-        bill = User.objects.get(username='bill')
-        sally = User.objects.get(username='sally')
+        bill = User.objects.get(username='bill').profile
+        sally = User.objects.get(username='sally').profile
         bill.follow(sally)
-
 
 
 class ImagerFollowTestCase(TestCase):
@@ -74,26 +85,26 @@ class ImagerFollowTestCase(TestCase):
         sally = User(username='sally')
         bill.save()
         sally.save()
-        bill.follow(sally)
+        bill.profile.follow(sally.profile)
 
     def test_unfollow(self):
-        bill = User.objects.get(username='bill')
-        sally = User.objects.get(username='sally')
-        self.assertEqual(billy in sally.followers, True)
+        bill = User.objects.get(username='bill').profile
+        sally = User.objects.get(username='sally').profile
+        self.assertEqual(bill in sally.followers.all(), True)
         bill.unfollow(sally)
-        self.assertEqual(billy in sally.followers, False)
+        self.assertEqual(bill in sally.followers.all(), False)
 
     def test_followers(self):
-        bill = User.objects.get(username='bill')
-        sally = User.objects.get(username='sally')
-        self.assertEqual(bill in sally.followers)
+        bill = User.objects.get(username='bill').profile
+        sally = User.objects.get(username='sally').profile
+        self.assertEqual(bill in sally.followers.all())
 
     def test_following(self):
-        bill = User.objects.get(username='bill')
-        sally = User.objects.get(username='sally')
+        bill = User.objects.get(username='bill').profile
+        sally = User.objects.get(username='sally').profile
         # Verify function
-        self.assertEqual(sally in bill.following, True)
-        self.assertEqual(bill in sally.followers, True)
+        self.assertEqual(sally in bill.following.all(), True)
+        self.assertEqual(bill in sally.followers.all(), True)
         # Verify not messing other things up
-        self.assertEqual(sally in bill.followers, False)
-        self.assertEqual(bill in sally.following, False)
+        self.assertEqual(sally in bill.followers.all(), False)
+        self.assertEqual(bill in sally.following.all(), False)

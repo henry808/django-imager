@@ -21,6 +21,14 @@ class ActiveProfileManager(models.Manager):
         return query.filter(is_active__exact=True)
 
 
+# class FollowersManager(models.Manager):
+#     """
+#     """
+#     def get_queryset(self):
+#         query = ImagerProfile.objects.all()
+#         return query.filter()
+
+
 @python_2_unicode_compatible
 class ImagerProfile(models.Model):
     """Thise sets up a User Profile with privacy settings."""
@@ -51,10 +59,17 @@ class ImagerProfile(models.Model):
     # associates profile to the User model
     user = models.OneToOneField(User, related_name='profile')
     is_active = models.BooleanField(default=True)
-    followers = models.ForeignKey('self', null=True, related_name='following')
+    followers = models.ForeignKey('self', null=True, related_name='following', symmetrical=False)
 
     objects = models.Manager()
     active = ActiveProfileManager()
+    followers = FollowersManager()
 
     def __str__(self):
         return self.user.username
+
+    def follow(self, other):
+        pass
+
+    def unfollow(self, other):
+        pass
