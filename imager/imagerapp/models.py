@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.encoding import python_2_unicode_compatible
+from imager.settings import STATIC_URL
 import datetime
-# from django.db.models.signals import post_save, pre_delete
+import os
 
 # Already in User:
 # username,
@@ -11,11 +13,15 @@ import datetime
 # active,
 
 
-class ActiveManager(models.Manager):
-    def all(self):
-        return User.objects.all().filter(is_active=True)
+class ActiveProfileManager(models.Manager):
+    """Profile Manager"""
+    def get_queryset(self):      
+        """gets"""
+        query = super(ActiveProfileManager, self).get_queryset()
+        return query.filter(is_active__exact=True)
 
 
+@python_2_unicode_compatible
 class ImagerProfile(models.Model):
     """Thise sets up a User Profile with privacy settings."""
     PRIVACY_CHOICES = (
@@ -24,7 +30,10 @@ class ImagerProfile(models.Model):
     )
 
     # new fields
-    picture = models.ImageField()
+    picture = models.ImageField(default=os.path.join(
+        STATIC_URL,
+        'images',
+        'default_profile_image.jpg'))
     birthday = models.DateField(default=datetime.date.today())
     phone = models.IntegerField(max_length=11, blank=True, null=True)
 
@@ -40,24 +49,12 @@ class ImagerProfile(models.Model):
     email_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
                                      default='PR')
     # associates profile to the User model
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
     is_active = models.BooleanField(default=True)
 
-    # Managers
     objects = models.Manager()
-    active = ActiveManager()
+    active = ActiveProfileManager()
 
-    # @staticmethod
-    # def active():
-    #     """Returns all active users."""
-    #     return User.objects.all().filter(is_active=True)
-    # qs = self.get_queryset()
-    # return qs.filter(associated)
 
-    # @property
-    # def is_active(self):
-    #     self.is_active = self.user.is_active
-    #     return self.is_active
-
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
