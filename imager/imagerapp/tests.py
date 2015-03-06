@@ -24,7 +24,6 @@ class ImagerTestCase(TestCase):
         self.assertEqual(User.objects.get(username='bob'), bob)
         self.assertEqual(User.objects.get(username='alice'), alice)
 
-
     def test_ImagerProfiles_Exist(self):
         """Test to see if creating a user creates ImagerProfile's"""
         bill = User.objects.get(username='bill')
@@ -32,7 +31,6 @@ class ImagerTestCase(TestCase):
         self.assertEqual(ImagerProfile.objects.count(), 2)
         self.assertEqual(bill.profile.user, bill)
         self.assertEqual(sally.profile.user, sally)
-
 
     def test_is_active(self):
         """Test to see if we can see if a user is active from their profile"""
@@ -67,6 +65,7 @@ class ImagerTestCase(TestCase):
         bill = User.objects.get(username='bill')
         sally = User.objects.get(username='sally')
         bill.follow(sally)
+
 
 
 class ImagerFollowTestCase(TestCase):

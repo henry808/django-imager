@@ -51,10 +51,10 @@ class ImagerProfile(models.Model):
     # associates profile to the User model
     user = models.OneToOneField(User, related_name='profile')
     is_active = models.BooleanField(default=True)
+    followers = models.ForeignKey('self', null=True, related_name='following')
 
     objects = models.Manager()
     active = ActiveProfileManager()
-
 
     def __str__(self):
         return self.user.username
