@@ -12,31 +12,46 @@ class ImagerTestCase(TestCase):
         pass
 
     def test_user(self):
-        """Tests to see if user is being created."""
+        """Test  to see if user is being created."""
         bill = User(username='bill')
         sally = User(username='sally')
         bill.save()
         sally.save()
-        # print bill
         self.assertEqual(User.objects.count(), 2)
         self.assertEqual(User.objects.get(username='bill'), bill)
         self.assertEqual(User.objects.get(username='sally'), sally)
 
 
     def test_ImagerProfiles_Exist(self):
-        """Tests to see if creating a user creates ImagerProfile's"""
+        """Test to see if creating a user creates ImagerProfile's"""
         bill = User(username='bill')
         sally = User(username='sally')
         bill.save()
         sally.save()
-        # print bill
         self.assertEqual(ImagerProfile.objects.count(), 2)
         self.assertEqual(bill.imagerprofile.user, bill)
         self.assertEqual(sally.imagerprofile.user, sally)
 
-    # def test_animals_can_speak(self):
-    #     """Animals that can speak are correctly identified"""
-    #     lion = ImagerProfile.objects.get(name="lion")
-    #     cat = ImagerProfile.objects.get(name="cat")
-    #     self.assertEqual(lion.speak(), 'The lion says "roar"')
-    #     self.assertEqual(cat.speak(), 'The cat says "meow"')
+
+    # def test_is_active(self):
+    #     """Test to see if we can see if a user is active from their profile"""
+    #     bill = User(username='bill')
+    #     sally = User(username='sally')
+    #     bill.save()
+    #     sally.save()
+    #     self.assertEqual(bill.imagerprofile.is_active, True)
+    #     self.assertEqual(sally.imagerprofile.is_active, True)
+    #     bill.is_active = False
+    #     bill.save()
+    #     self.assertEqual(bill.imagerprofile.is_active, False)
+
+    def test_active(self):
+        """Test to see if we can see all active users from their profile"""
+        bill = User(username='bill')
+        sally = User(username='sally')
+        bill.save()
+        sally.save()
+        self.assertEqual(len(ImagerProfile.active.count(), 2))
+        bill.is_active = False
+        bill.save()
+        self.assertEqual(len(ImagerProfile.active.count(), 1))
