@@ -13,13 +13,20 @@ import datetime
 
 class ActiveProfileManager(models.Manager):
     """Profile Manager"""
-    def get_queryset(self):
+    def all(self):      
         """gets"""
         query = super(ActiveProfileManager, self).get_queryset()
-        return query.filter(user__is_active__exact=True)
+        return query.filter(is_active__exact=True)
 
 
 # @python_2_unicode_compatible
+# =======
+# class ActiveManager(models.Manager):
+#     def all(self):
+#         return User.objects.all().filter(is_active=True)
+
+
+
 class ImagerProfile(models.Model):
     """Thise sets up a User Profile with privacy settings."""
     PRIVACY_CHOICES = (
@@ -30,7 +37,7 @@ class ImagerProfile(models.Model):
     # new fields
     picture = models.ImageField()
     birthday = models.DateField(default=datetime.date.today())
-    phone = models.IntegerField(max_length=11)
+    phone = models.IntegerField(max_length=11, blank=True, null=True)
 
     # privacy settings
     pic_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
@@ -45,18 +52,11 @@ class ImagerProfile(models.Model):
                                      default='PR')
     # associates profile to the User model
     user = models.OneToOneField(User)
+    is_active = models.BooleanField(default=True)
 
     objects = models.Manager()
     active = ActiveProfileManager()
 
 
-    def is_active(self):
-        return self.user.is_active
-
     def __str__(self):
         return self.user.username
-
-# create and delete
-# post_save.connect(create_profile, send=User)
-# pre_delete.connect(delete_user, sender=ImagerProfile)
-

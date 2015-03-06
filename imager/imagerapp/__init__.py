@@ -1,2 +1,1 @@
-# Setup receivers for signals
-default_app_config = 'imagerapp.app.ImagerConfig'
+default_app_config = 'imagerapp.apps.ImagerAppConfig'
