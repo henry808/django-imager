@@ -97,7 +97,7 @@ class ImagerFollowTestCase(TestCase):
     def test_followers(self):
         bill = User.objects.get(username='bill').profile
         sally = User.objects.get(username='sally').profile
-        self.assertEqual(bill in sally.followers.all())
+        self.assertEqual(bill in sally.followers.all(), False)
 
     def test_following(self):
         bill = User.objects.get(username='bill').profile
