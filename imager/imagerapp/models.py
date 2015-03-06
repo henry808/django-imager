@@ -13,7 +13,7 @@ import datetime
 
 class ActiveProfileManager(models.Manager):
     """Profile Manager"""
-    def all(self):      
+    def get_queryset(self):      
         """gets"""
         query = super(ActiveProfileManager, self).get_queryset()
         return query.filter(is_active__exact=True)
@@ -30,7 +30,7 @@ class ImagerProfile(models.Model):
     # new fields
     picture = models.ImageField()
     birthday = models.DateField(default=datetime.date.today())
-    phone = models.IntegerField(max_length=11, blank=True, default=0000000)
+    phone = models.IntegerField(max_length=11, blank=True, null=True)
 
     # privacy settings
     pic_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,

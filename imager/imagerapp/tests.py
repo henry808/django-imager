@@ -9,7 +9,10 @@ from django.contrib.auth.models import User
 
 class ImagerTestCase(TestCase):
     def setUp(self):
-        pass
+        bill = User(username='bill')
+        sally = User(username='sally')
+        bill.save()
+        sally.save()
 
     def test_user(self):
         """Test  to see if user is being created."""
@@ -33,25 +36,25 @@ class ImagerTestCase(TestCase):
         self.assertEqual(sally.imagerprofile.user, sally)
 
 
-    # def test_is_active(self):
-    #     """Test to see if we can see if a user is active from their profile"""
-    #     bill = User(username='bill')
-    #     sally = User(username='sally')
-    #     bill.save()
-    #     sally.save()
-    #     self.assertEqual(bill.imagerprofile.is_active, True)
-    #     self.assertEqual(sally.imagerprofile.is_active, True)
-    #     bill.is_active = False
-    #     bill.save()
-    #     self.assertEqual(bill.imagerprofile.is_active, False)
-
-    def test_active(self):
-        """Test to see if we can see all active users from their profile"""
+    def test_is_active(self):
+        """Test to see if we can see if a user is active from their profile"""
         bill = User(username='bill')
         sally = User(username='sally')
         bill.save()
         sally.save()
-        self.assertEqual(len(ImagerProfile.active.count(), 2))
+        self.assertEqual(bill.imagerprofile.is_active, True)
+        self.assertEqual(sally.imagerprofile.is_active, True)
         bill.is_active = False
         bill.save()
-        self.assertEqual(len(ImagerProfile.active.count(), 1))
+        self.assertEqual(bill.imagerprofile.is_active, False)
+
+    def test_active(self):
+        """Test the active manager in ImagerProfile."""
+        bill = User(username='bill')
+        sally = User(username='sally')
+        bill.save()
+        sally.save()
+        self.assertEqual(ImagerProfile.active.count(), 2)
+        bill.is_active = False
+        bill.save()
+        self.assertEqual(ImagerProfile.active.count(), 1)
