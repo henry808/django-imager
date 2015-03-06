@@ -21,7 +21,7 @@ class ActiveProfileManager(models.Manager):
         return query.filter(is_active__exact=True)
 
 
-# @python_2_unicode_compatible
+@python_2_unicode_compatible
 class ImagerProfile(models.Model):
     """Thise sets up a User Profile with privacy settings."""
     PRIVACY_CHOICES = (

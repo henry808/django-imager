@@ -52,3 +52,12 @@ class ImagerTestCase(TestCase):
         bill.is_active = False
         bill.save()
         self.assertEqual(ImagerProfile.active.count(), 1)
+
+
+    def test_unicode_and_str(self):
+        """Test ImagerProfile to return unicode and str representations"""
+        bill = User.objects.get(username='bill')
+        bill_str = str(bill.profile)
+        bill_unicode = unicode(bill.profile)
+        self.assertEqual(isinstance(bill_str, str), True)
+        self.assertEqual(isinstance(bill_unicode, unicode), True)
