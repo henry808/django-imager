@@ -14,11 +14,6 @@ def imager_signal_handler(sender, **kwargs):
 
     # Prevent an already existing profile from trying to save anew
     # else, update existing profile accordingly
-<<<<<<< HEAD
-    already_matched = ImagerProfile.objects.get(user_id=new.user)
-
-=======
->>>>>>> 0fedfc70fb8251ce34bb9d2d004076311c194005
     # import pdb; pdb.set_trace()
     try:
         already_matched = ImagerProfile.objects.get(user_id=new.user)
