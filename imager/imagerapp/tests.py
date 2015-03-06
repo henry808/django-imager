@@ -30,19 +30,19 @@ class ImagerTestCase(TestCase):
         bill = User.objects.get(username='bill')
         sally = User.objects.get(username='sally')
         self.assertEqual(ImagerProfile.objects.count(), 2)
-        self.assertEqual(bill.imagerprofile.user, bill)
-        self.assertEqual(sally.imagerprofile.user, sally)
+        self.assertEqual(bill.profile.user, bill)
+        self.assertEqual(sally.profile.user, sally)
 
 
     def test_is_active(self):
         """Test to see if we can see if a user is active from their profile"""
         bill = User.objects.get(username='bill')
         sally = User.objects.get(username='sally')
-        self.assertEqual(bill.imagerprofile.is_active, True)
-        self.assertEqual(sally.imagerprofile.is_active, True)
+        self.assertEqual(bill.profile.is_active, True)
+        self.assertEqual(sally.profile.is_active, True)
         bill.is_active = False
         bill.save()
-        self.assertEqual(bill.imagerprofile.is_active, False)
+        self.assertEqual(bill.profile.is_active, False)
 
     def test_active(self):
         """Test the active manager in ImagerProfile."""

@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
+from imager.settings import STATIC_URL
 import datetime
+import os
 
 # Already in User:
 # username,
@@ -28,7 +30,10 @@ class ImagerProfile(models.Model):
     )
 
     # new fields
-    picture = models.ImageField()
+    picture = models.ImageField(default=os.path.join(
+        STATIC_URL,
+        'images',
+        'default_profile_image.jpg'))
     birthday = models.DateField(default=datetime.date.today())
     phone = models.IntegerField(max_length=11, blank=True, null=True)
 
@@ -44,7 +49,7 @@ class ImagerProfile(models.Model):
     email_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
                                      default='PR')
     # associates profile to the User model
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
     is_active = models.BooleanField(default=True)
 
     objects = models.Manager()
