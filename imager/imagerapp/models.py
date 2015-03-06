@@ -26,7 +26,7 @@ class ImagerProfile(models.Model):
     # new fields
     picture = models.ImageField()
     birthday = models.DateField(default=datetime.date.today())
-    phone = models.IntegerField(max_length=11, blank=True)
+    phone = models.IntegerField(max_length=11, blank=True, null=True)
 
     # privacy settings
     pic_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
