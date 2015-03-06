@@ -53,7 +53,6 @@ class ImagerTestCase(TestCase):
         bill.save()
         self.assertEqual(ImagerProfile.active.count(), 1)
 
-
     def test_unicode_and_str(self):
         """Test ImagerProfile to return unicode and str representations"""
         bill = User.objects.get(username='bill')
@@ -61,3 +60,41 @@ class ImagerTestCase(TestCase):
         bill_unicode = unicode(bill.profile)
         self.assertEqual(isinstance(bill_str, str), True)
         self.assertEqual(isinstance(bill_unicode, unicode), True)
+
+
+# Tests for following
+    def test_follow(self):
+        bill = User.objects.get(username='bill')
+        sally = User.objects.get(username='sally')
+        bill.follow(sally)
+
+
+class ImagerFollowTestCase(TestCase):
+    def setUp(self):
+        bill = User(username='bill')
+        sally = User(username='sally')
+        bill.save()
+        sally.save()
+        bill.follow(sally)
+
+    def test_following(self):
+        bill = User.objects.get(username='bill')
+        sally = User.objects.get(username='sally')
+        # Verify function
+        self.assertEqual(sally in bill.following, True)
+        self.assertEqual(bill in sally.followers, True)
+        # Verify not messing other things up
+        self.assertEqual(sally in bill.followers, False)
+        self.assertEqual(bill in sally.following, False)
+
+    def test_unfollow(self):
+        bill = User.objects.get(username='bill')
+        sally = User.objects.get(username='sally')
+        self.assertEqual(billy in sally.followers, True)
+        bill.unfollow(sally)
+        self.assertEqual(billy in sally.followers, False)
+
+    def test_followers(self):
+        bill = User.objects.get(username='bill')
+        sally = User.objects.get(username='sally')
+        self.assertEqual(bill in sally.followers)
