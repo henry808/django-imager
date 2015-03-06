@@ -77,16 +77,6 @@ class ImagerFollowTestCase(TestCase):
         sally.save()
         bill.follow(sally)
 
-    def test_following(self):
-        bill = User.objects.get(username='bill')
-        sally = User.objects.get(username='sally')
-        # Verify function
-        self.assertEqual(sally in bill.following, True)
-        self.assertEqual(bill in sally.followers, True)
-        # Verify not messing other things up
-        self.assertEqual(sally in bill.followers, False)
-        self.assertEqual(bill in sally.following, False)
-
     def test_unfollow(self):
         bill = User.objects.get(username='bill')
         sally = User.objects.get(username='sally')
@@ -98,3 +88,13 @@ class ImagerFollowTestCase(TestCase):
         bill = User.objects.get(username='bill')
         sally = User.objects.get(username='sally')
         self.assertEqual(bill in sally.followers)
+
+    def test_following(self):
+        bill = User.objects.get(username='bill')
+        sally = User.objects.get(username='sally')
+        # Verify function
+        self.assertEqual(sally in bill.following, True)
+        self.assertEqual(bill in sally.followers, True)
+        # Verify not messing other things up
+        self.assertEqual(sally in bill.followers, False)
+        self.assertEqual(bill in sally.following, False)
