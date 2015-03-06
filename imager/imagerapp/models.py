@@ -20,13 +20,6 @@ class ActiveProfileManager(models.Manager):
 
 
 # @python_2_unicode_compatible
-# =======
-# class ActiveManager(models.Manager):
-#     def all(self):
-#         return User.objects.all().filter(is_active=True)
-
-
-
 class ImagerProfile(models.Model):
     """Thise sets up a User Profile with privacy settings."""
     PRIVACY_CHOICES = (
@@ -37,7 +30,7 @@ class ImagerProfile(models.Model):
     # new fields
     picture = models.ImageField()
     birthday = models.DateField(default=datetime.date.today())
-    phone = models.IntegerField(max_length=11, blank=True, null=True)
+    phone = models.IntegerField(max_length=11, blank=True, default=0000000)
 
     # privacy settings
     pic_privacy = models.CharField(max_length=2, choices=PRIVACY_CHOICES,
