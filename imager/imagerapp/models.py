@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.encoding import python_2_unicode_compatible
 import datetime
-# from django.db.models.signals import post_save, pre_delete
 
 # Already in User:
 # username,
@@ -11,6 +11,15 @@ import datetime
 # active,
 
 
+class ActiveProfileManager(models.Manager):
+    """Profile Manager"""
+    def get_queryset(self):
+        """gets"""
+        query = super(ActiveProfileManager, self).get_queryset()
+        return query.filter(user__is_active__exact=True)
+
+
+# @python_2_unicode_compatible
 class ImagerProfile(models.Model):
     """Thise sets up a User Profile with privacy settings."""
     PRIVACY_CHOICES = (
@@ -37,17 +46,14 @@ class ImagerProfile(models.Model):
     # associates profile to the User model
     user = models.OneToOneField(User)
 
-    @staticmethod
-    def active():
-        """Returns all active users."""
-        return User.objects.all().filter(is_active=True)
-#   qs = self.get_queryset()
-#   return qs.filter(associated)
+    objects = models.Manager()
+    active = ActiveProfileManager()
+
 
     def is_active(self):
         return self.user.is_active
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
 
 # create and delete
