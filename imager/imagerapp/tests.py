@@ -149,4 +149,3 @@ class ImagerFollowTestCase(TestCase):
         bill = self.bill.profile
         with self.assertRaises(ValueError):
             bill.unfollow(sally)
-

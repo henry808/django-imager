@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('picture', models.ImageField(default=b'/static/images\\default_profile_image.jpg', upload_to=b'')),
-                ('birthday', models.DateField(default=datetime.date(2015, 3, 6))),
+                ('birthday', models.DateField(default=datetime.date(2015, 3, 7))),
                 ('phone', models.IntegerField(max_length=11, null=True, blank=True)),
                 ('pic_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
                 ('birthday_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('name_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
                 ('email_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
                 ('is_active', models.BooleanField(default=True)),
-                ('followers', models.ForeignKey(related_name='following', to='imagerapp.ImagerProfile')),
+                ('following', models.ManyToManyField(related_name='followers', null=True, to='imagerapp.ImagerProfile')),
                 ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
             options={
