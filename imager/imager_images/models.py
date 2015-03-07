@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Photo(models.Model):
+    user = models.ForeignKey(User, related_name='photo')
     picture = models.ImageField()
     date_uploaded = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)

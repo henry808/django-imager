@@ -1,11 +1,13 @@
 from django.test import TestCase
 
-# Create your tests here.
 import datetime
 from django.utils import timezone
 from imagerapp.models import ImagerProfile
 from django.contrib.auth.models import User
 
+import factory
+import factory.django
+from imager_images.models import Album, Photo
 
 class ImagerTestCase(TestCase):
     def setUp(self):
@@ -149,3 +151,45 @@ class ImagerFollowTestCase(TestCase):
         bill = self.bill.profile
         with self.assertRaises(ValueError):
             bill.unfollow(sally)
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: u'username%d' % n)
+
+
+class AlbumFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Album
+
+    title = factory.Sequence(lambda n: u'albumtitle%d' % n)
+    user = factory.SubFactory(UserFactory)
+
+
+class PhotoFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Photo
+
+    title = factory.Sequence(lambda n: u'phototitle%d' % n)
+    user = factory.SubFactory(UserFactory)
+
+
+class ImagerPhotoAlbumTestCase(TestCase):
+    def setUp(self):
+        PhotoFactory.reset_sequence()
+        self.user = UserFactory()
+        self.album = AlbumFactory(user=self.user)
+        self.photo1 = PhotoFactory(user=self.user)
+        self.photo2 = PhotoFactory(user=self.user)
+
+    def test_photo_exists(self):
+        """Tests that created photo exists."""
+        self.assertEqual(isinstance(self.photo1, Photo), True)
+        self.assertEqual(self.photo1.title, 'phototitle1')
+
+    def test_album_exists(self):
+        """Tests that created photo exists."""
+        self.assertEqual(isinstance(self.album, Album), True)
+        self.assertEqual(self.album.title, 'albumtitle1')
