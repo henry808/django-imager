@@ -38,6 +38,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=50)),
                 ('description', models.CharField(max_length=300, null=True, blank=True)),
                 ('published', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'SH', b'Shard'), (b'PU', b'Public')])),
+                ('user', models.ForeignKey(related_name='photo', to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
