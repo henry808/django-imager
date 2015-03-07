@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-
 import datetime
 from django.conf import settings
 
@@ -18,15 +17,17 @@ class Migration(migrations.Migration):
             name='ImagerProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('picture', models.ImageField(upload_to=b'')),
-                ('birthday', models.DateField(default=datetime.date(2015, 3, 4))),
-                ('phone', models.IntegerField(max_length=11)),
+                ('picture', models.ImageField(default=b'/static/images\\default_profile_image.jpg', upload_to=b'')),
+                ('birthday', models.DateField(default=datetime.date(2015, 3, 6))),
+                ('phone', models.IntegerField(max_length=11, null=True, blank=True)),
                 ('pic_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
                 ('birthday_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
                 ('phone_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
                 ('name_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
                 ('email_privacy', models.CharField(default=b'PR', max_length=2, choices=[(b'PR', b'Private'), (b'PU', b'Public')])),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('is_active', models.BooleanField(default=True)),
+                ('followers', models.ForeignKey(related_name='following', to='imagerapp.ImagerProfile')),
+                ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },

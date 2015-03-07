@@ -26,7 +26,7 @@ class ActiveProfileManager(models.Manager):
 #     """
 #     def get_queryset(self):
 #         query = ImagerProfile.objects.all()
-#         return query.filter()
+#         return query
 
 
 @python_2_unicode_compatible
@@ -59,11 +59,11 @@ class ImagerProfile(models.Model):
     # associates profile to the User model
     user = models.OneToOneField(User, related_name='profile')
     is_active = models.BooleanField(default=True)
-    followers = models.ForeignKey('self', null=True, related_name='following', symmetrical=False)
+    followers = models.ManyToManyField('self', related_name='following')
 
     objects = models.Manager()
     active = ActiveProfileManager()
-    followers = FollowersManager()
+    # followers = FollowersManager()
 
     def __str__(self):
         return self.user.username
