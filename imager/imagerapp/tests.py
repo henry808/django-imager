@@ -132,7 +132,7 @@ class ImagerFollowTestCase(TestCase):
         self.assertEqual(bill in sally.followers.all(), True)
 
     def test_unfollow(self):
-        """Tests that follow works."""
+        """Tests that unfollow works."""
         sally = self.sally.profile
         bill = self.bill.profile
         bill.follow(sally)
@@ -142,3 +142,11 @@ class ImagerFollowTestCase(TestCase):
         self.assertEqual(sally in bill.following.all(), False)
         self.assertEqual(sally.followers.count(), 0)
         self.assertEqual(bill in sally.followers.all(), False)
+
+    def test_unfollow_not_followed(self):
+        """"Test that unfollow throws ValueError if that follow was not there"""
+        sally = self.sally.profile
+        bill = self.bill.profile
+        with self.assertRaises(ValueError):
+            bill.unfollow(sally)
+

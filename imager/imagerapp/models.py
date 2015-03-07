@@ -15,7 +15,7 @@ import os
 
 class ActiveProfileManager(models.Manager):
     """Profile Manager"""
-    def get_queryset(self):      
+    def get_queryset(self):
         """gets"""
         query = super(ActiveProfileManager, self).get_queryset()
         return query.filter(is_active__exact=True)
@@ -66,5 +66,7 @@ class ImagerProfile(models.Model):
         self.following.add(other)
 
     def unfollow(self, other):
-        self.following.remove(other)
-        pass
+        if other in self.following.all():
+            self.following.remove(other)
+        else:
+            raise ValueError('Cannot unfollow someone you are not following.')
