@@ -51,6 +51,7 @@ class ImagerProfile(models.Model):
     # associates profile to the User model
     user = models.OneToOneField(User, related_name='profile')
     is_active = models.BooleanField(default=True)
+
     following = models.ManyToManyField('self',
                                        null=True,
                                        symmetrical=False,
