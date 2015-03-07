@@ -15,18 +15,10 @@ import os
 
 class ActiveProfileManager(models.Manager):
     """Profile Manager"""
-    def get_queryset(self):      
+    def get_queryset(self):
         """gets"""
         query = super(ActiveProfileManager, self).get_queryset()
         return query.filter(is_active__exact=True)
-
-
-# class FollowersManager(models.Manager):
-#     """
-#     """
-#     def get_queryset(self):
-#         query = ImagerProfile.objects.all()
-#         return query
 
 
 @python_2_unicode_compatible
@@ -59,17 +51,23 @@ class ImagerProfile(models.Model):
     # associates profile to the User model
     user = models.OneToOneField(User, related_name='profile')
     is_active = models.BooleanField(default=True)
-    followers = models.ManyToManyField('self', related_name='following')
+
+    following = models.ManyToManyField('self',
+                                       null=True,
+                                       symmetrical=False,
+                                       related_name='followers')
 
     objects = models.Manager()
     active = ActiveProfileManager()
-    # followers = FollowersManager()
 
     def __str__(self):
         return self.user.username
 
     def follow(self, other):
-        pass
+        self.following.add(other)
 
     def unfollow(self, other):
-        pass
+        if other in self.following.all():
+            self.following.remove(other)
+        else:
+            raise ValueError('Cannot unfollow someone you are not following.')
