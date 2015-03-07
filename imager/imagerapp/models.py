@@ -63,7 +63,8 @@ class ImagerProfile(models.Model):
         return self.user.username
 
     def follow(self, other):
-        pass
+        self.following.add(other)
 
     def unfollow(self, other):
+        self.following.remove(other)
         pass
