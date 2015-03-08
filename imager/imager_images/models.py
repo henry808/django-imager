@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 # Create your models here.
@@ -9,9 +10,9 @@ class Photo(models.Model):
     date_uploaded = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
     # TODO: change date_published to only write when an image is shared
-    date_published = models.DateField(auto_now=True)
+    date_published = models.DateField(blank=True, null=True)
 
-    title = models.CharField(max_length=(50))
+    title = models.CharField(max_length=(50), blank=True, null=True)
     description = models.CharField(max_length=(300), blank=True, null=True)
 
     PRIVATE = 'PR'
@@ -28,8 +29,10 @@ class Photo(models.Model):
 
 
 class Album(models.Model):
+    #relations
     user = models.ForeignKey(User, related_name='albums')
     photos = models.ManyToManyField(Photo, related_name='albums', null=True, blank=True)
+    cover_photo = models.ForeignKey(Photo, related_name='+', blank=True, null=True)
 
     date_uploaded = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
