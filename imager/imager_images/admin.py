@@ -3,7 +3,6 @@ from imager_images.models import Photo, Album
 import gettext
 
 
-
 class SizeListFilter(admin.SimpleListFilter):
     title = gettext.gettext('File size')
 
