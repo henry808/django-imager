@@ -55,8 +55,8 @@ ROOT_URLCONF = 'imager.urls'
 WSGI_APPLICATION = 'imager.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+Database
+https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
     'default': {
