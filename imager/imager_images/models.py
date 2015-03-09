@@ -5,15 +5,15 @@ from django.db.models import Q
 
 # Create your models here.
 class Photo(models.Model):
-    user = models.ForeignKey(User, related_name='photo')
+    user = models.ForeignKey(User, related_name='photos')
     picture = models.ImageField()
     date_uploaded = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
     # TODO: change date_published to only write when an image is shared
     date_published = models.DateField(blank=True, null=True)
 
-    title = models.CharField(max_length=(50), blank=True, null=True)
-    description = models.CharField(max_length=(300), blank=True, null=True)
+    title = models.CharField(max_length=(63), blank=True)
+    description = models.TextField(max_length=(255), blank=True)
 
     PRIVATE = 'PR'
     SHARED = 'SH'
@@ -21,7 +21,7 @@ class Photo(models.Model):
 
     PRIVACY_CHOICES = (
         (PRIVATE, 'Private'),
-        (SHARED, 'Shard'),
+        (SHARED, 'Shared'),
         (PUBLIC, 'Public'),
     )
 
@@ -42,8 +42,8 @@ class Album(models.Model):
     # TODO: change date_published to only write when an image is shared
     date_published = models.DateField(auto_now=True)
 
-    title = models.CharField(max_length=(50))
-    description = models.CharField(max_length=(300), blank=True, null=True)
+    title = models.CharField(max_length=(63))
+    description = models.TextField(max_length=(255), blank=True)
 
     PRIVATE = 'PR'
     SHARED = 'SH'
@@ -51,7 +51,7 @@ class Album(models.Model):
 
     PRIVACY_CHOICES = (
         (PRIVATE, 'Private'),
-        (SHARED, 'Shard'),
+        (SHARED, 'Shared'),
         (PUBLIC, 'Public'),
     )
 

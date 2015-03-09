@@ -9,6 +9,14 @@ class ProfileInLine(admin.TabularInline):
 
 
 class UserAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Info', {'fields': ['username', 'first_name', 'last_name', 'email', 'password']}),
+        ('Status', {'fields': ['is_staff', 'is_active', 'is_superuser']}),
+        ('Date Information', {'fields': ['date_joined', 'last_login']}),
+        ('Permissions', {'fields': ['groups', 'user_permissions']}),
+    ]
+
+    readonly_fields = ('password', 'date_joined', 'last_login')
     inlines = [
         ProfileInLine
     ]
