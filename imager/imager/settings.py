@@ -112,4 +112,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 TEMPLATE_DIRS =[ os.path.join(BASE_DIR, 'imager/templates')]
 
-EMAIL_BACKEND = 'django.core.mail.backend.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = 'tmp/activation'
