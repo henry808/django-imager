@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'imagerapp',
-    'imager_images'
+    'imager_images',
+    'registration'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -54,6 +55,11 @@ ROOT_URLCONF = 'imager.urls'
 
 WSGI_APPLICATION = 'imager.wsgi.application'
 
+#registration
+ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
+REGISTRATION_AUTO_LOGIN = True  # Automatically log the user in.
+LOGIN_REDIRECT_URL = '/'  # The page you want users to arrive at after they successful log in
+LOGIN_URL = '/accounts/login/'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
