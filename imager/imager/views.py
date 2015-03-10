@@ -12,20 +12,3 @@ def home(request):
 
     context = {'random_image': random_image.picture, 'request': request}
     return render(request, 'home.html', {'context': context})
-
-
-def login(request):
-    pass
-
-
-def logout(request):
-    pass
-
-
-def register(request):
-    pass
-
-
-def activate(request):
-    pass
-
