@@ -28,3 +28,4 @@ def register(request):
 
 def activate(request):
     pass
+
