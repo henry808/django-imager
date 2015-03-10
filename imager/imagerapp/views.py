@@ -1,3 +1,3 @@
 from django.shortcuts import render
-
-# Create your views here.
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.template import RequestContext, loader
