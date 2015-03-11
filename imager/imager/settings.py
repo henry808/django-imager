@@ -105,6 +105,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 # Generates url fields to media files.
 MEDIA_URL = '/media/'
 
