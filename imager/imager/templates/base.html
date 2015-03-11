@@ -11,7 +11,8 @@
                 <li><a href="{% url 'auth_logout' %}?next=/">Logout</a></li>
                 <li><a href="{% url 'auth_logout' %}?next=/">Stream</a></li>
                 <li><a href="{% url 'auth_logout' %}?next=/">Library</a></li>
-                <li><a href="{% url 'auth_logout' %}?next=/">Profile</a></li>
+                <li><a href="{% url 'profile_detail' user.profile.pk %}">Profile</a></li>
+    
             {% else %}
                 <li><a href="{% url 'auth_login' %}">Login</a></li>
             {% endif %}
