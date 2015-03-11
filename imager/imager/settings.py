@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'imagerapp',
     'imager_images',
-    'registration'
+    'registration',
+    'debug_toolbar'
 )
 
 MIDDLEWARE_CLASSES = (

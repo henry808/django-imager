@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from registration.backends.simple.views import RegistrationView
+# from registration.backends.simple.views import RegistrationView
 from django.conf import settings
-from django.conf.urls.static import static
+# from django.conf.urls.static import static
 
 urlpatterns = patterns('',
     url(r'^$', 'imager.views.home', name='home'),

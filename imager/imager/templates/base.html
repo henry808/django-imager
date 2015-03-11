@@ -2,8 +2,22 @@
 <html>
     <head>
         <h1>Imager!</h1>
+        <link rel="stylesheet" type="text/css" href="../../static/style.css" />
         <a href='{% url 'imager.views.home' %}'>home</a>
     </head>
+    <nav id="navBar">
+        <ul>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'auth_logout' %}?next=/">Logout</a></li>
+                <li><a href="{% url 'auth_logout' %}?next=/">Stream</a></li>
+                <li><a href="{% url 'auth_logout' %}?next=/">Library</a></li>
+                <li><a href="{% url 'auth_logout' %}?next=/">Profile</a></li>
+            {% else %}
+                <li><a href="{% url 'auth_login' %}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
     <body>
         {% block context %}
         {% endblock %}
