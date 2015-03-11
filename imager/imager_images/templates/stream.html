@@ -6,9 +6,10 @@
         <h1>{{ user.username }}'s Stream View</h1>
         <ul>
             <li>Username: {{ user.username }}</li>
-            {% for photo in object_list|viewable:user %}
+            {% for photo in object_list|viewable:user reversed %}
                 <li>
                     <h3>Owner: {{ photo.user.username }}</h3>
+                    <p>Date uploaded: {{ photo.date_uploaded }}</p>
                     <img src="{{ MEDIA_URL }}{{ photo.picture }}">
                     </li>
             {% endfor  %}
