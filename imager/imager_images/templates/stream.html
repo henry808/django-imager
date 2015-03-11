@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block context %}
     {% if user.is_authenticated %}
+    {% load photo_extras %}
     <div>
         <h1>{{ user.username }}'s Stream View</h1>
         <ul>
             <li>Username: {{ user.username }}</li>
-            {% for photo in object_list.filter|photo.published:Private %}
+            {% for photo in object_list|viewable:user %}
                 <li>
                     <h3>Owner: {{ photo.user.username }}</h3>
                     <img src="{{ MEDIA_URL }}{{ photo.picture }}">
