@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Q
 
 
 # Create your models here.
@@ -29,6 +28,7 @@ class Photo(models.Model):
 
     def size(self):
         return self.picture.size
+
 
 
 class Album(models.Model):
