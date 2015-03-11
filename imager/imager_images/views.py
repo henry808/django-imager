@@ -1,3 +1,8 @@
 from django.shortcuts import render
+from django.views.generic import ListView
+from imager_images.models import Photo
+#from imager_users.forms import ImagerProfileEditForm # to override form
 
-# Create your views here.
+class StreamView(ListView):
+    model = Photo
+    template_name = "stream.html"
