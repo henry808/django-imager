@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     #url(r'^imagerapp/', include(imagerapp.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'^profile/', include('imagerapp.urls')),
     # url(r'^static/(?P<path>images/.*)$', 'django.views.static.serve',
     #              {'document_root': settings.STATIC_ROOT}),
 )
