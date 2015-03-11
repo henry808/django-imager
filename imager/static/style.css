@@ -1,0 +1,13 @@
+nav {
+    float: right;
+    text-decoration: none;
+    background-color: blue;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav li {
+    display: inline-block;
+}
