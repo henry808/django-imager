@@ -8,7 +8,7 @@ from imager_images.models import Photo
 
 
 def home(request):
-    photos = Photo.objects.filter(published=Photo.PRIVATE)
+    photos = Photo.objects.filter(published=Photo.PUBLIC)
 
     if photos.count():
         location = MEDIA_URL
