@@ -16,4 +16,4 @@ def viewable(self, user):
         Q(user=user) |
         Q(published=SHARED) |
         Q(published=PUBLIC)
-        ).order_by('date_published')
+        )

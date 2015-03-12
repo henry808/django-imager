@@ -26,6 +26,9 @@ class Photo(models.Model):
 
     published = models.CharField(max_length=2, choices=PRIVACY_CHOICES, default=PRIVATE)
 
+    class Meta:
+        ordering = ['-date_uploaded']
+
     def size(self):
         return self.picture.size
 
