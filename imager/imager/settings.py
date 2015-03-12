@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'imagerapp',
     'imager_images',
     'registration',
-    'debug_toolbar'
+    'debug_toolbar',
+    'sorl.thumbnail',
 )
 
 MIDDLEWARE_CLASSES = (
