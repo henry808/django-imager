@@ -17,3 +17,9 @@ def viewable(self, user):
         Q(published=SHARED) |
         Q(published=PUBLIC)
         )
+
+@register.filter
+def viewable_user(self, user):
+    return Photo.objects.filter(
+        Q(user=user)
+        )

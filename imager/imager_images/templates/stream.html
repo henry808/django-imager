@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block context %}
+{% block body %}
     {% if user.is_authenticated %}
     {% load photo_extras %}
     <div>
@@ -17,4 +17,3 @@
     </div>
     {% endif %}
 {% endblock %}
-<h1>Profile Detail View</h1>

@@ -8,5 +8,6 @@ class StreamView(ListView):
     template_name = "stream.html"
 
 
-def library_view(request):
+def library_view(request, *args, **kwargs):
+    print kwargs
     return render(request, 'library.html', {})
