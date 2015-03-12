@@ -23,7 +23,7 @@
                 {% for album in user.albums.all %}
                     <li>
                         <p>Title: {{ album.title }}</p>
-                        {% thumbnail album.picture "80x80" as im %}
+                        {% thumbnail album.cover_photo.picture "80x80" as im %}
                             <img src="{{ im.url }}">
                         {% empty %}
                             <p>No image: {{ im.url }}</p>
