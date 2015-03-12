@@ -5,6 +5,8 @@
         {% load thumbnail %}
         <div>
             <h1>{{ user.username }}'s Library View</h1>
+            <li><a href="{% url 'upload_photo' %}">Upload new photo</a></li>
+            <li><a href="{% url 'create_album' %}">Create new album</a></li>
             <h3>Photos</h3>
             <ul>
                 {% for photo in object_list|viewable_user:user %}
