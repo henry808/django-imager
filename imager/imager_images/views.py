@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
-from imager_images.models import Photo
+from imager_images.models import Photo, Album
 from django.contrib.auth.decorators import login_required
 #from imager_users.forms import ImagerProfileEditForm # to override form
 

@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
-from imager_images.views import StreamView, UploadPhoto
+from imager_images.views import StreamView, UploadPhoto, CreateAlbum
 
 
 urlpatterns = patterns('',
@@ -15,8 +15,8 @@ urlpatterns = patterns('',
                            login_required(UploadPhoto.as_view(
                                template_name='upload_photo.html')),
                            name='upload_photo'),
-                       )
                        url(r'^create_album$',
                            login_required(CreateAlbum.as_view(
                                template_name='create_album.html')),
-                           name='create_album')
+                           name='create_album'),
+                       )
