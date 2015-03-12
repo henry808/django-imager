@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from imager_images.models import Photo, Album
 from django.contrib.auth.decorators import login_required
 #from imager_users.forms import ImagerProfileEditForm # to override form
@@ -16,9 +16,19 @@ class UploadPhoto(CreateView):
     template_name = "upload_photo.html"
 
 
+class EditPhoto(UpdateView):
+    model = Photo
+    template_name = "edit_photo.html"
+
+
 class CreateAlbum(CreateView):
     model = Album
     template_name = "create_album"
+
+
+class EditAlbum(UpdateView):
+    model = Album
+    template_name = "edit_album.html"
 
 
 @login_required
