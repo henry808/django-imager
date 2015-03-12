@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 #from imager_users.forms import ImagerProfileEditForm # to override form
 
 
-@login_required
+# @login_required
 class StreamView(ListView):
     model = Photo
     template_name = "stream.html"
