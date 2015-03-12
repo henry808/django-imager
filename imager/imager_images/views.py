@@ -6,3 +6,7 @@ from imager_images.models import Photo
 class StreamView(ListView):
     model = Photo
     template_name = "stream.html"
+
+
+def library_view(request):
+    return render(request, 'library.html', {})

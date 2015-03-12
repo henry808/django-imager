@@ -19,4 +19,4 @@ def home(request):
     context = {'random_image': random_image,
                'request': request,
                'image_location': location}
-    return render(request, 'home.html', {'context': context})
+    return render(request, 'home.html', context)
