@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from imagerapp.views import ImagerProfileDetailView, ImagerProfileUpdateView
+from imagerapp.views import ImagerProfileDetailView
 from django.contrib.auth.decorators import login_required
 
 
@@ -10,8 +10,7 @@ urlpatterns = patterns('',
                                template_name='profile_detail.html')),
                            name='profile_detail'),
                        url(r'^update/(?P<pk>\d+)$',
-                           login_required(ImagerProfileUpdateView.as_view(
-                               template_name='profile_update.html')),
+                           'imagerapp.views.profile_update_view',
                            name='profile_update'),
     # Examples:
 
