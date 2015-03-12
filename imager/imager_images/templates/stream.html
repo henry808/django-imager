@@ -6,6 +6,7 @@
         <h1>{{ user.username }}'s Stream View</h1>
         <ul>
             <li>Username: {{ user.username }}</li>
+            <li><a href="{% url 'upload_photo' %}">Add new photo</a></li>
             {% for photo in object_list|viewable:user %}
                 <li>
                     <h3>Owner: {{ photo.user.username }}</h3>
