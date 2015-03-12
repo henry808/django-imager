@@ -1,5 +1,6 @@
 nav {
     float: center;
+    text-align: center;
     text-decoration: none;
     background-color: cyan;
 }
@@ -10,4 +11,8 @@ nav ul {
 
 nav li {
     display: inline-block;
+}
+header .logout a, .login a {
+    background-color: lightgreen;
+    margin: 10em;
 }

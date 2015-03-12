@@ -23,7 +23,8 @@ class AlbumAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Info', {'fields': ['user', 'title', 'description']}),
         ('Date information', {'fields': ['date_uploaded', 'date_modified', 'date_published']}),
-        ('Published', {'fields': ['published']})
+        ('Published', {'fields': ['published']}),
+        ('Cover Photo', {'fields': ['cover_photo']}),
     ]
     readonly_fields = ('date_uploaded', 'date_modified', 'date_published')
     list_display = ('user', 'title', 'cover_photo', 'published')
