@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block context %}
+{% block body %}
     <div>
         {% if user.is_authenticated %}
             <a href="{% url 'auth_logout' %}?next=/">Logout</a>
@@ -15,7 +15,7 @@
     </div>
     <p>The Amazing Imager App!</p>
     <div>
-    {{ context.random_image }}
-    <img src="{{ context.image_location }}{{context.random_image }}">
+    {{ random_image }}
+    <img src="{{ image_location }}{{ random_image }}">
     </div>
 {% endblock %}

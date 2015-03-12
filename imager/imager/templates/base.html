@@ -10,7 +10,7 @@
             {% if user.is_authenticated %}
                 <li><a href="{% url 'auth_logout' %}?next=/">Logout</a></li>
                 <li><a href="{% url 'stream' user.profile.pk %}">Stream</a></li>
-                <li><a href="{% url 'auth_logout' %}?next=/">Library</a></li>
+                <li><a href="{% url 'library' user.profile.pk %}">Library</a></li>
                 <li><a href="{% url 'profile_detail' user.profile.pk %}">Profile</a></li>
     
             {% else %}
@@ -20,7 +20,7 @@
     </nav>
 
     <body>
-        {% block context %}
+        {% block body %}
         {% endblock %}
     </body>
 </html>
