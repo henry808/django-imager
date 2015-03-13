@@ -36,20 +36,14 @@ def profile_update_view(request, *args, **kwargs):
     # import pdb; pdb.set_trace()
     if request.method == 'POST':
         # For submission of form for updating information...
-        form = ProfileForm(instance=profile, initial=request.POST)
+        form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
-            form = form.clean()
             form.save()
-
-            user.first_name = form.fields.get('first_name')
-            user.last_name = form.fields.get('last_name')
-            user.email = form.fields.get('email')
+            user.first_name = form.cleaned_data.get('first_name')
+            user.last_name = form.cleaned_data.get('last_name')
+            user.email = form.cleaned_data.get('email')
             user.save()
-            # Redirect to profile detail...
-        else:
-            return render(request, 'profile_update.html', {'form': form})
-
-    elif request.method == 'GET':
+    else:
         # For populating a form when a user navigates to page
         # using the edit link in the profile detail page...
         initial = {'first_name': user.first_name,
@@ -58,8 +52,4 @@ def profile_update_view(request, *args, **kwargs):
                    }
 
         form = ProfileForm(instance=profile, initial=initial)
-        return render(request, 'profile_update.html', {'form': form})
-
-    else:
-        pass
-        # Return bad request error...
+    return render(request, 'profile_update.html', {'form': form})
