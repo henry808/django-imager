@@ -8,11 +8,25 @@ from imagerapp.models import ImagerProfile
 from django.contrib.auth.models import User
 from imagerapp.forms import ProfileForm
 #from imager_users.forms import ImagerProfileEditForm # to override form
-
+from django.views.decorators.http import require_http_methods
+from django.core.context_processors import csrf
 
 class ImagerProfileDetailView(DetailView):
     model = ImagerProfile
     template_name = "profile_detail.html"
+
+
+@require_http_methods(["POST"])
+@login_required
+def profile_update_complete_view(request, *args, **kwargs):
+    c = {}
+    c.update(csrf(request))
+    profile = ImagerProfile.objects.get(pk=kwargs['pk'])
+    user = profile.user
+    import pdb; pdb.set_trace()
+    profile.save()
+    user.save()
+
 
 
 # class ImagerProfileUpdateView(FormView):
