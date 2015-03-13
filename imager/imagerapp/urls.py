@@ -12,6 +12,9 @@ urlpatterns = patterns('',
                        url(r'^update/(?P<pk>\d+)$',
                            'imagerapp.views.profile_update_view',
                            name='profile_update'),
+                       # url(r'^update_complete/(?P<pk>\d+)$',
+                       #     'imagerapp.views.profile_update_complete_view',
+                       #     name='update_complete'),
     # Examples:
 
     # url(r'^$', 'imager.views.home', name='home'),

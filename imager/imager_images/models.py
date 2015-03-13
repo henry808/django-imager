@@ -33,12 +33,15 @@ class Photo(models.Model):
         return self.picture.size
 
 
+def get_photo():
+    return Photo.objects.filter(published=Photo.PUBLIC).order_by('?')[0]
+
 
 class Album(models.Model):
     #relations
     user = models.ForeignKey(User, related_name='albums')
     photos = models.ManyToManyField(Photo, related_name='albums', null=True, blank=True)
-    cover_photo = models.ForeignKey(Photo, related_name='+', blank=True, null=True)
+    cover_photo = models.ForeignKey(Photo, related_name='+', blank=True, default=get_photo)
 
     date_uploaded = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
