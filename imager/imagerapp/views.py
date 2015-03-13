@@ -43,17 +43,13 @@ def profile_update_view(request, *args, **kwargs):
     # import pdb; pdb.set_trace()
     if request.method == 'POST':
         # For submission of form for updating information...
-        form = ProfileForm(instance=profile, initial=request.POST)
+        form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
-            form = form.clean()
             form.save()
-        else:
-            return render(request, 'profile_update.html', {'form': form})
-
-        user.first_name = form.fields.get('first_name')
-        user.last_name = form.fields.get('last_name')
-        user.email = form.fields.get('email')
-        user.save()
+            user.first_name = form.cleaned_data.get('first_name')
+            user.last_name = form.cleaned_data.get('last_name')
+            user.email = form.cleaned_data.get('email')
+            user.save()
     else:
         # For populating a form when a user navigates to page
         # using the edit link in the profile detail page...
