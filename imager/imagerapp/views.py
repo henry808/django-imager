@@ -11,6 +11,7 @@ from imagerapp.forms import ProfileForm
 from django.views.decorators.http import require_http_methods
 from django.core.context_processors import csrf
 
+
 class ImagerProfileDetailView(DetailView):
     model = ImagerProfile
     template_name = "profile_detail.html"
@@ -28,14 +29,6 @@ def profile_update_complete_view(request, *args, **kwargs):
     user.save()
 
 
-
-# class ImagerProfileUpdateView(FormView):
-#     template_name = "profile_update.html"
-#     instance = {'first_name': 'the first one'}
-#     form_class = ProfileForm
-#     success_url = 'profile_detail'
-
-
 @login_required
 def profile_update_view(request, *args, **kwargs):
     profile = ImagerProfile.objects.get(pk=kwargs['pk'])
@@ -47,14 +40,16 @@ def profile_update_view(request, *args, **kwargs):
         if form.is_valid():
             form = form.clean()
             form.save()
+
+            user.first_name = form.fields.get('first_name')
+            user.last_name = form.fields.get('last_name')
+            user.email = form.fields.get('email')
+            user.save()
+            # Redirect to profile detail...
         else:
             return render(request, 'profile_update.html', {'form': form})
 
-        user.first_name = form.fields.get('first_name')
-        user.last_name = form.fields.get('last_name')
-        user.email = form.fields.get('email')
-        user.save()
-    else:
+    elif request.method == 'GET':
         # For populating a form when a user navigates to page
         # using the edit link in the profile detail page...
         initial = {'first_name': user.first_name,
@@ -63,4 +58,8 @@ def profile_update_view(request, *args, **kwargs):
                    }
 
         form = ProfileForm(instance=profile, initial=initial)
-    return render(request, 'profile_update.html', {'form': form})
+        return render(request, 'profile_update.html', {'form': form})
+
+    else:
+        pass
+        # Return bad request error...

@@ -34,7 +34,7 @@ class ImagerProfile(models.Model):
         STATIC_URL,
         'images',
         'default_profile_image.jpg'))
-    birthday = models.DateField(default=datetime.date.today())
+    birthday = models.DateField(default=datetime.date.today)
     phone = models.IntegerField(max_length=11, blank=True, null=True)
 
     # privacy settings
