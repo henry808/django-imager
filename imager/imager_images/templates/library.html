@@ -17,6 +17,9 @@
                         {% empty %}
                             <p>No image: {{ im.url }}</p>
                         {% endthumbnail %}
+                        {% if photo.user = user %}
+                            <p><a href="{% url 'edit_photo' photo.pk %}">Edit</a></p>
+                        {% endif %}
                     </li>
                 {% endfor  %}
             </ul>
@@ -30,6 +33,9 @@
                         {% empty %}
                             <p>No image: {{ im.url }}</p>
                         {% endthumbnail %}
+                        {% if album.user = user %}
+                            <p><a href="{% url 'edit_album' album.pk %}">Edit</a></p>
+                        {% endif %}
                     </li>
                 {% endfor  %}
             </ul>
