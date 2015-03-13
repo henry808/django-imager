@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
 from django.template import RequestContext, loader
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView
@@ -26,18 +26,27 @@ class ImagerProfileDetailView(DetailView):
 def profile_update_view(request, *args, **kwargs):
     profile = ImagerProfile.objects.get(pk=kwargs['pk'])
     user = profile.user
-    initial = {'first_name': user.first_name,
-               'last_name': user.last_name,
-               'phone': profile.phone,
-               'email': user.email,
-               'birthday': profile.birthday,
-               'picture': profile.picture,
+    # import pdb; pdb.set_trace()
+    if request.method == 'POST':
+        # For submission of form for updating information...
+        form = ProfileForm(instance=profile, initial=request.POST)
+        if form.is_valid():
+            form = form.clean()
+            form.save()
+        else:
+            return render(request, 'profile_update.html', {'form': form})
 
-               'name_privacy': profile.name_privacy,
-               'email_privacy': profile.email_privacy,
-               'birthday_privacy': profile.birthday_privacy,
-               'pic_privacy': profile.pic_privacy,
-               'phone_privacy': profile.phone_privacy}
+        user.first_name = form.fields.get('first_name')
+        user.last_name = form.fields.get('last_name')
+        user.email = form.fields.get('email')
+        user.save()
+    else:
+        # For populating a form when a user navigates to page
+        # using the edit link in the profile detail page...
+        initial = {'first_name': user.first_name,
+                   'last_name': user.last_name,
+                   'email': user.email,
+                   }
 
-    form = ProfileForm(initial=initial)
+        form = ProfileForm(instance=profile, initial=initial)
     return render(request, 'profile_update.html', {'form': form})
