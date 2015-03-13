@@ -14,21 +14,61 @@ class StreamView(ListView):
 class UploadPhoto(CreateView):
     model = Photo
     template_name = "upload_photo.html"
+    fields = ['picture', 'title', 'description', 'published']
+
+    def post(self, request, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        form_class = self.get_form_class()
+        form = form_class(request.POST)
+        if form.is_valid():
+            form.save()
+
+        return self.render_to_response({'form': form})
 
 
 class EditPhoto(UpdateView):
     model = Photo
     template_name = "edit_photo.html"
+    fields = ['title', 'description', 'published']
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        instance = Photo.objects.get(pk=kwargs['pk'])
+        form = form_class(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+
+        return self.render_to_response({'form': form})
 
 
 class CreateAlbum(CreateView):
     model = Album
     template_name = "create_album"
+    fields = []
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        # instance = Album.objects.get(pk=kwargs['pk'])
+        form = form_class(request.POST)
+        if form.is_valid():
+            form.save()
+
+        return self.render_to_response({'form': form})
 
 
 class EditAlbum(UpdateView):
     model = Album
     template_name = "edit_album.html"
+    fields = ['title', 'description', 'published']
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        instance = Album.objects.get(pk=kwargs['pk'])
+        form = form_class(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+
+        return self.render_to_response({'form': form})
 
 
 @login_required
