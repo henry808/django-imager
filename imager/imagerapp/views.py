@@ -11,6 +11,7 @@ from imagerapp.forms import ProfileForm
 from django.views.decorators.http import require_http_methods
 from django.core.context_processors import csrf
 
+
 class ImagerProfileDetailView(DetailView):
     model = ImagerProfile
     template_name = "profile_detail.html"
@@ -26,14 +27,6 @@ def profile_update_complete_view(request, *args, **kwargs):
     import pdb; pdb.set_trace()
     profile.save()
     user.save()
-
-
-
-# class ImagerProfileUpdateView(FormView):
-#     template_name = "profile_update.html"
-#     instance = {'first_name': 'the first one'}
-#     form_class = ProfileForm
-#     success_url = 'profile_detail'
 
 
 @login_required
