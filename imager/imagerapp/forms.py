@@ -1,5 +1,4 @@
 from django import forms
-from django.forms import Form
 from imagerapp.models import ImagerProfile
 
 
@@ -14,6 +13,7 @@ class ProfileForm(forms.ModelForm):
         'email_privacy',
         'pic_privacy',
         'birthday_privacy']
+
 
     first_name = forms.CharField(required=False)
     last_name = forms.CharField(required=False)
