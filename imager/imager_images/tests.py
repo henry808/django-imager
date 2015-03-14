@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.test import Client
+from django.core.urlresolvers import reverse
 
 import datetime
 from django.contrib.auth.models import User
@@ -88,3 +90,50 @@ class ImagerPhotoAlbumTestCase(TestCase):
     def test_album_ownership(self):
         self.assertEqual(self.album.user, self.user)
         self.assertFalse(self.album.user is self.another_user)
+
+
+class LibraryAndStreamTestCase(TestCase):
+    def setUp(self):
+        # Setup a couple users with some content
+        PhotoFactory.reset_sequence()
+        UserFactory.reset_sequence()
+        AlbumFactory.reset_sequence()
+
+        self.user = UserFactory()
+        self.another_user = UserFactory()
+
+        self.photo1 = PhotoFactory(user=self.user, published='PU')
+        self.photo2 = PhotoFactory(user=self.user)
+        self.album = AlbumFactory(user=self.user)
+
+        self.client = Client()
+
+    def test_anonymous_cant_see_library(self):
+        # Test anonynomous user cannot view library
+        response = self.client.get(
+            reverse('library', kwargs={'pk': self.user.profile.pk}),
+            follow=True)
+        # Verifies that the anonymous user is redirected to the login page when not logged in
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Log in', response.content)
+
+    def test_anonymous_cant_see_stream(self):
+        # Test anonymous user cannot view a stream
+        response = self.client.get(
+            reverse('stream', kwargs={'pk': self.user.profile.pk}),
+            follow=True)
+        # Verifies that the anonymous user is redirected to the login page when not logged in
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Log in', response.content)
+
+    def test_user_can_see_library(self):
+        pass
+
+    def test_other_cant_see_library(self):
+        pass
+
+    def test_user_can_see_stream(self):
+        pass
+
+    def test_other_cant_see_stream(self):
+        pass
