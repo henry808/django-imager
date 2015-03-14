@@ -5,6 +5,8 @@ from django.test import Client
 # from django.utils import timezone
 from imagerapp.models import ImagerProfile
 from django.contrib.auth.models import User
+from registration.models import RegistrationProfile
+from django.core.urlresolvers import reverse
 
 import factory
 import factory.django
@@ -179,9 +181,87 @@ class ImagerFollowTestCase(TestCase):
 
 class ImagerRegistration(TestCase):
     def setUp(self):
+        self.user = {}
+        self.user['bill'] = User.objects.create_user(username='bill',
+                                                     password='secret')
         self.client1 = Client()
 
-    def test_login(self):
-        response = self.client1.post('/login/',
-                                     {'username': 'billy', 'password': 'pass'})
+    def test_login_unauthorized(self):
+        """Test that an unauthorized user cannot get in."""
+        response = self.client1.post('/accounts/login/',
+                                     {'username': 'hacker', 'password': 'badpass'})
         self.assertEqual(response.status_code, 200)
+        self.assertIn('Please enter a correct username and password.', response.content)
+        is_logged_in = self.client1.login(username='hacker', password='badpass')
+        self.assertFalse(is_logged_in)
+
+    def test_login_authorized(self):
+        """Test that an authorized user can get in."""
+        response = self.client1.post('/accounts/login/',
+                                     {'username': 'bill', 'password': 'secret'})
+        self.assertEqual(response.status_code, 302)
+        is_logged_in = self.client1.login(username='bill', password='secret')
+        self.assertTrue(is_logged_in)
+
+
+    def test_logout(self):
+        """Test that an authorized user can log out."""
+        is_logged_in = self.client1.login(username='bill', password='secret')
+        self.assertTrue(is_logged_in)
+        response = self.client1.post('/accounts/logout/')
+        # Goes to an intermediate page that the user never sees before
+        # going back to the home page
+        self.assertIn('You are now logged out.', response.content)
+
+    def test_library_security(self):
+        pk = str(self.user['bill'].pk)
+        response = self.client1.post('/images/library/' + pk)
+        self.assertEqual(response.status_code, 302)
+
+    def test_submitting_registration(self):
+        response = self.client1.post('/accounts/register/',
+                                     {'username': 'ted',
+                                      'email': 'ted@ted.com',
+                                      'password1': 'secret',
+                                      'password2': 'secret'},
+                                     follow=True)
+        self.assertIn('/accounts/register/complete/', response.redirect_chain[0][0])
+        self.assertEqual(response.status_code, 200)
+        # make sure that user is created and they are not activated yet
+        user1 = User.objects.get(username='ted')
+        self.assertFalse(user1.is_active)
+
+    def test_activate_with_good_key(self):
+        response = self.client1.post('/accounts/register/',
+                                     {'username': 'ted',
+                                      'email': 'ted@ted.com',
+                                      'password1': 'secret',
+                                      'password2': 'secret'},
+                                     follow=True)
+        # user is not activate yet
+        user1 = User.objects.get(username='ted')
+        self.assertFalse(user1.is_active)
+        activation_key = RegistrationProfile.objects.get(user=user1).activation_key
+        activation_uri = reverse('registration_activate', kwargs={'activation_key': activation_key})
+        response = self.client1.get(activation_uri, follow=True)
+        user1 = User.objects.get(username='ted')
+        # user is active after activating with key
+        self.assertTrue(user1.is_active)
+
+    def test_activation_with_wrong_key(self):
+        response = self.client1.post('/accounts/register/',
+                                     {'username': 'ted',
+                                      'email': 'ted@ted.com',
+                                      'password1': 'secret',
+                                      'password2': 'secret'},
+                                     follow=True)
+        # user is not activate yet
+        user1 = User.objects.get(username='ted')
+        self.assertFalse(user1.is_active)
+        activation_key = 'somepieceofcrap'
+        activation_uri = reverse('registration_activate', kwargs={'activation_key': activation_key})
+        response = self.client1.get(activation_uri, follow=True)
+        user1 = User.objects.get(username='ted')
+        # user is not active after activating with a bad key
+        self.assertFalse(user1.is_active)
+
