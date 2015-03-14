@@ -8,7 +8,7 @@ urlpatterns = patterns('',
                            login_required(StreamView.as_view(
                                template_name='stream.html')),
                            name='stream'),
-                       url(r'library/(?P<pk>\d+)$',
+                       url(r'^library/(?P<pk>\d+)$',
                            'imager_images.views.library_view',
                            name='library'),
                        url(r'^upload_photo$',
