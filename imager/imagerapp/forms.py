@@ -25,6 +25,7 @@ class ProfileForm(forms.ModelForm):
                   'pic_privacy',
                   'birthday_privacy']
 
+
     first_name = forms.CharField(required=False)
     last_name = forms.CharField(required=False)
     email = forms.CharField()

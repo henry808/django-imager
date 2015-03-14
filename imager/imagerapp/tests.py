@@ -1,13 +1,39 @@
 from django.test import TestCase
+from django.test import Client
 
-import datetime
-from django.utils import timezone
+# import datetime
+# from django.utils import timezone
 from imagerapp.models import ImagerProfile
 from django.contrib.auth.models import User
+from registration.models import RegistrationProfile
+from django.core.urlresolvers import reverse
 
 import factory
 import factory.django
 from imager_images.models import Album, Photo
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: u'username%d' % n)
+
+
+class AlbumFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Album
+
+    title = factory.Sequence(lambda n: u'albumtitle%d' % n)
+    user = factory.SubFactory(UserFactory)
+
+
+class PhotoFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Photo
+
+    title = factory.Sequence(lambda n: u'phototitle%d' % n)
+    user = factory.SubFactory(UserFactory)
 
 class ImagerTestCase(TestCase):
     def setUp(self):
@@ -153,83 +179,89 @@ class ImagerFollowTestCase(TestCase):
             bill.unfollow(sally)
 
 
-class UserFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = User
-
-    username = factory.Sequence(lambda n: u'username%d' % n)
-
-
-class AlbumFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Album
-
-    title = factory.Sequence(lambda n: u'albumtitle%d' % n)
-    user = factory.SubFactory(UserFactory)
-
-
-class PhotoFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Photo
-
-    title = factory.Sequence(lambda n: u'phototitle%d' % n)
-    user = factory.SubFactory(UserFactory)
-
-
-class ImagerPhotoAlbumTestCase(TestCase):
+class ImagerRegistration(TestCase):
     def setUp(self):
-        PhotoFactory.reset_sequence()
-        UserFactory.reset_sequence()
-        AlbumFactory.reset_sequence()
-        self.user = UserFactory()
-        self.another_user = UserFactory()
-        self.album = AlbumFactory(user=self.user)
-        self.photo1 = PhotoFactory(user=self.user)
-        self.photo2 = PhotoFactory(user=self.user)
+        self.user = {}
+        self.user['bill'] = User.objects.create_user(username='bill',
+                                                     password='secret')
+        self.client1 = Client()
 
-    # Tests for photos
-    def test_photo_exists(self):
-        """Tests that created photo exists."""
-        self.assertEqual(isinstance(self.photo1, Photo), True)
+    def test_login_unauthorized(self):
+        """Test that an unauthorized user cannot get in."""
+        response = self.client1.post('/accounts/login/',
+                                     {'username': 'hacker', 'password': 'badpass'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Please enter a correct username and password.', response.content)
+        is_logged_in = self.client1.login(username='hacker', password='badpass')
+        self.assertFalse(is_logged_in)
 
-    def test_photo_title(self):
-        self.assertEqual(self.photo1.title, 'phototitle1')
+    def test_login_authorized(self):
+        """Test that an authorized user can get in."""
+        response = self.client1.post('/accounts/login/',
+                                     {'username': 'bill', 'password': 'secret'})
+        self.assertEqual(response.status_code, 302)
+        is_logged_in = self.client1.login(username='bill', password='secret')
+        self.assertTrue(is_logged_in)
 
-    def test_photo_no_descr(self):
-        self.assertEqual(self.photo1.description, None)
 
-    def test_photo_date(self):
-        self.assertEqual(self.photo1.date_uploaded, datetime.date.today())
+    def test_logout(self):
+        """Test that an authorized user can log out."""
+        is_logged_in = self.client1.login(username='bill', password='secret')
+        self.assertTrue(is_logged_in)
+        response = self.client1.post('/accounts/logout/')
+        # Goes to an intermediate page that the user never sees before
+        # going back to the home page
+        self.assertIn('You are now logged out.', response.content)
 
-    # Tests for album
-    def test_album_exists(self):
-        """Tests that created photo exists."""
-        self.assertEqual(isinstance(self.album, Album), True)
+    def test_library_security(self):
+        pk = str(self.user['bill'].pk)
+        response = self.client1.post('/images/library/' + pk)
+        self.assertEqual(response.status_code, 302)
 
-    def test_album_title(self):
-        self.assertEqual(self.album.title, 'albumtitle1')
+    def test_submitting_registration(self):
+        response = self.client1.post('/accounts/register/',
+                                     {'username': 'ted',
+                                      'email': 'ted@ted.com',
+                                      'password1': 'secret',
+                                      'password2': 'secret'},
+                                     follow=True)
+        self.assertIn('/accounts/register/complete/', response.redirect_chain[0][0])
+        self.assertEqual(response.status_code, 200)
+        # make sure that user is created and they are not activated yet
+        user1 = User.objects.get(username='ted')
+        self.assertFalse(user1.is_active)
 
-    def test_album_no_descr(self):
-        self.assertEqual(self.album.description, None)
+    def test_activate_with_good_key(self):
+        response = self.client1.post('/accounts/register/',
+                                     {'username': 'ted',
+                                      'email': 'ted@ted.com',
+                                      'password1': 'secret',
+                                      'password2': 'secret'},
+                                     follow=True)
+        # user is not activate yet
+        user1 = User.objects.get(username='ted')
+        self.assertFalse(user1.is_active)
+        activation_key = RegistrationProfile.objects.get(user=user1).activation_key
+        activation_uri = reverse('registration_activate', kwargs={'activation_key': activation_key})
+        response = self.client1.get(activation_uri, follow=True)
+        user1 = User.objects.get(username='ted')
+        # user is active after activating with key
+        self.assertTrue(user1.is_active)
 
-    def test_album_date(self):
-        self.assertEqual(self.album.date_uploaded, datetime.date.today())
+    def test_activation_with_wrong_key(self):
+        response = self.client1.post('/accounts/register/',
+                                     {'username': 'ted',
+                                      'email': 'ted@ted.com',
+                                      'password1': 'secret',
+                                      'password2': 'secret'},
+                                     follow=True)
+        # user is not activate yet
+        user1 = User.objects.get(username='ted')
+        self.assertFalse(user1.is_active)
+        activation_key = 'somepieceofcrap'
+        activation_uri = reverse('registration_activate', kwargs={'activation_key': activation_key})
+        response = self.client1.get(activation_uri, follow=True)
+        user1 = User.objects.get(username='ted')
+        # user is not active after activating with a bad key
+        self.assertFalse(user1.is_active)
 
-    def test_photo_ownership(self):
-        self.assertEqual(self.photo1.user, self.user)
-        self.assertEqual(self.photo2.user, self.user)
-        self.assertFalse(self.photo1.user is self.another_user)
-        self.assertFalse(self.photo2.user is self.another_user)
-
-    def test_photo_no_albumship(self):
-        self.assertFalse(self.photo1 in self.album.photos.all())
-        self.assertFalse(self.photo2 in self.album.photos.all())
-
-    def test_photo_in_album(self):
-        self.photo1.albums.add(self.album)
-        self.assertTrue(self.photo1 in self.album.photos.all())
-        self.assertFalse(self.photo2 in self.album.photos.all())
-
-    def test_album_ownership(self):
-        self.assertEqual(self.album.user, self.user)
-        self.assertFalse(self.album.user is self.another_user)

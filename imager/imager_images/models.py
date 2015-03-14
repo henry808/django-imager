@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils.encoding import python_2_unicode_compatible
 
 # Create your models here.
+@python_2_unicode_compatible
 class Photo(models.Model):
     user = models.ForeignKey(User, related_name='photos')
     picture = models.ImageField()
@@ -26,6 +27,13 @@ class Photo(models.Model):
 
     published = models.CharField(max_length=2, choices=PRIVACY_CHOICES, default=PRIVATE)
 
+    def __str__(self):
+        if self.title:
+            return self.title
+        else:
+            return str(self.picture)
+
+
     class Meta:
         ordering = ['-date_uploaded']
 
@@ -34,9 +42,12 @@ class Photo(models.Model):
 
 
 def get_photo():
-    return Photo.objects.filter(published=Photo.PUBLIC).order_by('?')[0]
+    try:
+        return Photo.objects.filter(published=Photo.PUBLIC).order_by('?')[0].pk
+    except IndexError:
+        pass
 
-
+@python_2_unicode_compatible
 class Album(models.Model):
     #relations
     user = models.ForeignKey(User, related_name='albums')
@@ -62,3 +73,6 @@ class Album(models.Model):
     )
 
     published = models.CharField(max_length=2, choices=PRIVACY_CHOICES, default=PRIVATE)
+
+    def __str__(self):
+        return self.title
