@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% if user.is_authenticated %}
     {% block body %}
-        {{ user }}
         <form action="{% url 'create_album' %}" method="post">
             {% csrf_token %}
             {{ form.as_p }}

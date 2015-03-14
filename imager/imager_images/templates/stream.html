@@ -3,7 +3,7 @@
     {% if user.is_authenticated %}
     {% load photo_extras %}
     <div>
-        <h1>{{ user.username }}'s Stream View</h1>
+        <h3>Stream View</h3>
         <ul>
             <li>Username: {{ user.username }}</li>
             <li><a href="{% url 'upload_photo' %}">Upload new photo</a></li>
