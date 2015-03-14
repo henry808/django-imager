@@ -4,7 +4,7 @@ from imager_images.views import StreamView, UploadPhoto, CreateAlbum, EditPhoto,
 
 
 urlpatterns = patterns('',
-                       url(r'^(?P<pk>\d+)$',
+                       url(r'^stream/(?P<pk>\d+)$',
                            login_required(StreamView.as_view(
                                template_name='stream.html')),
                            name='stream'),
@@ -22,7 +22,7 @@ urlpatterns = patterns('',
                        url(r'^create_album/$',
                            login_required(CreateAlbum.as_view(
                                template_name='create_album.html')),
-                           name='create_album/'),
+                           name='create_album'),
                        url(r'^edit_album/(?P<pk>\d+)$', login_required(EditAlbum.as_view(
                                template_name='edit_album.html')),
                            name='edit_album'
