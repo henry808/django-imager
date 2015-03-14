@@ -42,8 +42,10 @@ class Photo(models.Model):
 
 
 def get_photo():
-    return Photo.objects.filter(published=Photo.PUBLIC).order_by('?')[0].pk
-
+    try:
+        return Photo.objects.filter(published=Photo.PUBLIC).order_by('?')[0].pk
+    except IndexError:
+        pass
 
 @python_2_unicode_compatible
 class Album(models.Model):
