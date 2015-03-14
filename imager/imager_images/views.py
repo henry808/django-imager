@@ -44,11 +44,12 @@ class EditPhoto(UpdateView):
 class CreateAlbum(CreateView):
     model = Album
     template_name = "create_album"
-    fields = []
+    fields = ['user', 'title']
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         # instance = Album.objects.get(pk=kwargs['pk'])
+        import pdb; pdb.set_trace()
         form = form_class(request.POST)
         if form.is_valid():
             form.save()
@@ -68,6 +69,7 @@ class EditAlbum(UpdateView):
         if form.is_valid():
             form.save()
 
+        import pdb; pdb.set_trace()
         return self.render_to_response({'form': form})
 
 
