@@ -233,3 +233,15 @@ class ImagerPhotoAlbumTestCase(TestCase):
     def test_album_ownership(self):
         self.assertEqual(self.album.user, self.user)
         self.assertFalse(self.album.user is self.another_user)
+
+from django.test import Client
+
+
+class ImagerRegistration(TestCase):
+    def setUp(self):
+        self.client1 = Client()
+
+    def test_login(self):
+        response = self.client1.post('/login/',
+                                     {'username': 'john', 'password': 'smith'})
+        self.assertEqual(response.status_code == 200)
