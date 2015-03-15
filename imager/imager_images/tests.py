@@ -247,7 +247,7 @@ class EditingandUploadingPhotosTestCase(TestCase):
         
         # response = self.client.post(reverse('upload_photo'), form)
 
-\
+
         # self.assertFieldOutput(EmailField, {'a@a.com': 'a@a.com'}
         # self.assertFormError(response, form, 'title', errors)
         #print Photo.objects.all()
