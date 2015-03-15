@@ -95,15 +95,24 @@ class ImagerPhotoAlbumTestCase(TestCase):
 class LibraryAndStreamTestCase(TestCase):
     def setUp(self):
         # Setup a couple users with some content
-        PhotoFactory.reset_sequence()
-        UserFactory.reset_sequence()
-        AlbumFactory.reset_sequence()
+        # PhotoFactory.reset_sequence()
+        # UserFactory.reset_sequence()
+        # AlbumFactory.reset_sequence()
 
-        self.user = UserFactory()
-        self.another_user = UserFactory()
+        self.user = User(username='user1')
+        self.user.set_password('pass')
+        self.user.save()
+
+        self.another_user = User(username='user2')
+        self.another_user.set_password('shall_not')
+        self.another_user.save()
 
         self.photo1 = PhotoFactory(user=self.user, published='PU')
-        self.photo2 = PhotoFactory(user=self.user)
+        self.photo1.picture = 'something'
+        self.photo1.save()
+        self.photo2 = PhotoFactory(user=self.user, published='PR')
+        self.photo2.picture = 'else'
+        self.photo2.save()
         self.album = AlbumFactory(user=self.user)
 
         self.client = Client()
@@ -127,13 +136,59 @@ class LibraryAndStreamTestCase(TestCase):
         self.assertIn('Log in', response.content)
 
     def test_user_can_see_library(self):
-        pass
+        # Login
+        self.client.login(username='user1', password='pass')
+
+        # Go to library page as a logged in user
+        response = self.client.get(
+            reverse('library', kwargs={'pk': self.user.profile.pk}))
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Library View', response.content)
+
+        # Verify user's content is on page using edit links for photos
+        edit_link1 = reverse('edit_photo', kwargs={'pk': self.photo1.pk})
+        edit_link2 = reverse('edit_photo', kwargs={'pk': self.photo2.pk})
+        self.assertIn(edit_link1, response.content)
+        self.assertIn(edit_link2, response.content)
 
     def test_other_cant_see_library(self):
-        pass
+        # Login
+        self.client.login(username='user2', password='shall_not')
+
+        # Test going to library doesn't allow access to other person's content
+        response = self.client.get(
+            reverse('library', kwargs={'pk': self.user.profile.pk}))
+        self.assertEquals(response.status_code, 200)
+
+        # Verify user1's photos are not on the page
+        edit_link1 = reverse('edit_photo', kwargs={'pk': self.photo1.pk})
+        edit_link2 = reverse('edit_photo', kwargs={'pk': self.photo2.pk})
+        self.assertNotIn(edit_link1, response.content)
+        self.assertNotIn(edit_link2, response.content)
 
     def test_user_can_see_stream(self):
-        pass
+        # Login
+        self.client.login(username='user1', password='pass')
+
+        # Go to stream page as a logged in user
+        response = self.client.get(
+            reverse('stream', kwargs={'pk': self.user.profile.pk}))
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Stream View', response.content)
+
+        # Verify user1's photos are on the page
+        self.assertIn(self.photo1.picture.url, response.content)
+        self.assertIn(self.photo2.picture.url, response.content)
 
     def test_other_cant_see_stream(self):
-        pass
+        # Login
+        self.client.login(username='user2', password='shall_not')
+
+        # Go to stream page as a logged in user
+        response = self.client.get(
+            reverse('stream', kwargs={'pk': self.user.profile.pk}))
+        self.assertEquals(response.status_code, 200)
+
+        # Verify only user1's public photos are on the page
+        self.assertIn(self.photo1.picture.url, response.content)
+        self.assertNotIn(self.photo2.picture.url, response.content)
