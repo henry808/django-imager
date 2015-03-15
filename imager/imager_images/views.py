@@ -121,5 +121,4 @@ class EditAlbum(UpdateView):
 
 @login_required
 def library_view(request, *args, **kwargs):
-    print kwargs
     return render(request, 'library.html', {})
