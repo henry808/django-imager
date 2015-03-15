@@ -9,6 +9,10 @@ import factory
 import factory.django
 from imager_images.models import Album, Photo
 
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from imager.settings import BASE_DIR
+
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -192,3 +196,71 @@ class LibraryAndStreamTestCase(TestCase):
         # Verify only user1's public photos are on the page
         self.assertIn(self.photo1.picture.url, response.content)
         self.assertNotIn(self.photo2.picture.url, response.content)
+
+
+class EditingandUploadingPhotosTestCase(TestCase):
+    def setUp(self):
+        # Setup a couple users with some content
+        # PhotoFactory.reset_sequence()
+        # UserFactory.reset_sequence()
+        # AlbumFactory.reset_sequence()
+
+        self.user = User(username='user1')
+        self.user.set_password('pass')
+        self.user.save()
+
+        self.another_user = User(username='user2')
+        self.another_user.set_password('shall_not')
+        self.another_user.save()
+
+        self.photo1 = PhotoFactory(user=self.user, published='PU')
+        self.photo1.picture = 'something'
+        self.photo1.save()
+        self.photo2 = PhotoFactory(user=self.user, published='PR')
+        self.photo2.picture = 'else'
+        self.photo2.save()
+
+        self.client = Client()
+
+    def test_user_can_upload_photo(self):
+        self.client.login(username='user1', password='pass')
+        response = self.client.get(
+            reverse('upload_photo'))
+        # make sure at upload photo form
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Upload a photo', response.content)
+        with open(BASE_DIR + "/Frankensteins_monster_Boris_Karloff.jpg", 'rb') as file1:
+            pic_file = SimpleUploadedFile(file1.name, file1.read(), 'image/jpeg')
+            response = self.client.post(
+                reverse('upload_photo'),
+                {'title': 'My Pets',
+                 'picture': 'String',
+                 'user': self.user,
+                 'published': 'PU'})
+        import pdb; pdb.set_trace()
+        self.assertIn('Library', response.content)
+        # pic_file = SimpleUploadedFile("pictures.jpg", bin(2413241))
+        # form = response.context['form']
+        # form.fields['title'] = 'Title1'
+        # form.fields['picture'] = pic_file
+        # form.fields['user'] = self.user
+        
+        # response = self.client.post(reverse('upload_photo'), form)
+
+\
+        # self.assertFieldOutput(EmailField, {'a@a.com': 'a@a.com'}
+        # self.assertFormError(response, form, 'title', errors)
+        #print Photo.objects.all()
+        
+        
+        # 
+
+
+    # def test_anonymous_cant_see_stream(self):
+    #     # Test anonymous user cannot view a stream
+    #     response = self.client.get(
+    #         reverse('stream', kwargs={'pk': self.user.profile.pk}),
+    #         follow=True)
+    #     # Verifies that the anonymous user is redirected to the login page when not logged in
+    #     self.assertEquals(response.status_code, 200)
+    #     self.assertIn('Log in', response.content)
