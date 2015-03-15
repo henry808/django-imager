@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from imagerapp.models import ImagerProfile
 from django.contrib.auth.models import User
 from imagerapp.forms import ProfileForm
+from django.core.urlresolvers import reverse
 #from imager_users.forms import ImagerProfileEditForm # to override form
 from django.views.decorators.http import require_http_methods
 from django.core.context_processors import csrf
@@ -29,7 +30,7 @@ def profile_update_complete_view(request, *args, **kwargs):
     user.save()
 
 
-@login_required
+
 def profile_update_view(request, *args, **kwargs):
     profile = ImagerProfile.objects.get(pk=kwargs['pk'])
     user = profile.user
@@ -43,6 +44,11 @@ def profile_update_view(request, *args, **kwargs):
             user.last_name = form.cleaned_data.get('last_name')
             user.email = form.cleaned_data.get('email')
             user.save()
+            return HttpResponseRedirect(
+                reverse(
+                    'profile_detail',
+                    kwargs={'pk': request.user.profile.pk}
+                ))
     else:
         # For populating a form when a user navigates to page
         # using the edit link in the profile detail page...
