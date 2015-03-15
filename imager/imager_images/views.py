@@ -9,11 +9,13 @@ from django.http import HttpResponseRedirect
 #from imager_users.forms import ImagerProfileEditForm # to override form
 
 
+@login_required
 class StreamView(ListView):
     model = Photo
     template_name = "stream.html"
 
 
+@login_required
 class UploadPhoto(CreateView):
     model = Photo
     template_name = "upload_photo.html"
@@ -35,6 +37,7 @@ class UploadPhoto(CreateView):
         return self.render_to_response({'form': form})
 
 
+@login_required
 class EditPhoto(UpdateView):
     model = Photo
     template_name = "edit_photo.html"
@@ -55,6 +58,7 @@ class EditPhoto(UpdateView):
         return self.render_to_response({'form': form})
 
 
+@login_required
 class CreateAlbum(CreateView):
     model = Album
     template_name = "create_album"
@@ -88,6 +92,7 @@ class CreateAlbum(CreateView):
         return form
 
 
+@login_required
 class EditAlbum(UpdateView):
     model = Album
     template_name = "edit_album.html"
