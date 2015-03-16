@@ -1,34 +1,22 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
-from django.template import RequestContext, loader
+from django.http import HttpResponseRedirect
 from django.views.generic import DetailView
-from django.views.generic.edit import FormView
-from django.contrib.auth.decorators import login_required
 from imagerapp.models import ImagerProfile
-from django.contrib.auth.models import User
 from imagerapp.forms import ProfileForm
 from django.core.urlresolvers import reverse
+
+# from django.template import RequestContext, loader
+# from django.views.generic.edit import FormView
+# from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.models import User
 #from imager_users.forms import ImagerProfileEditForm # to override form
-from django.views.decorators.http import require_http_methods
-from django.core.context_processors import csrf
+# from django.views.decorators.http import require_http_methods
+# from django.core.context_processors import csrf
 
 
 class ImagerProfileDetailView(DetailView):
     model = ImagerProfile
     template_name = "profile_detail.html"
-
-
-@require_http_methods(["POST"])
-@login_required
-def profile_update_complete_view(request, *args, **kwargs):
-    c = {}
-    c.update(csrf(request))
-    profile = ImagerProfile.objects.get(pk=kwargs['pk'])
-    user = profile.user
-    import pdb; pdb.set_trace()
-    profile.save()
-    user.save()
-
 
 
 def profile_update_view(request, *args, **kwargs):
