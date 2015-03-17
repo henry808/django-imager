@@ -237,7 +237,6 @@ class EditingandUploadingPhotosTestCase(TestCase):
                  'picture': 'String',
                  'user': self.user,
                  'published': 'PU'})
-        import pdb; pdb.set_trace()
         self.assertIn('Library', response.content)
         # pic_file = SimpleUploadedFile("pictures.jpg", bin(2413241))
         # form = response.context['form']
