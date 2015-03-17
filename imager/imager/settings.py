@@ -37,6 +37,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'imagerapp',
+    'imager_images',
+    'registration',
+    'debug_toolbar',
+    'sorl.thumbnail',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -53,38 +57,43 @@ ROOT_URLCONF = 'imager.urls'
 
 WSGI_APPLICATION = 'imager.wsgi.application'
 
+#registration
+ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
+REGISTRATION_AUTO_LOGIN = True  # Automatically log the user in.
+LOGIN_REDIRECT_URL = '/'  # The page you want users to arrive at after they successful log in
+LOGIN_URL = '/accounts/login/'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'imager',
-#         'USER': 'JustinKan',
-#         'PASSWORD': '',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'imager',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'USER': 'JustinKan',
+        'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'imager',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Pacific'
+TIME_ZONE = 'US/Pacific'
 
 USE_I18N = True
 
@@ -98,7 +107,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_PATH = os.path.join(BASE_DIR, 'static/')
+
+STATICFILES_DIRS = (
+    STATIC_PATH,
+)
+
 # Generates url fields to media files.
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+TEMPLATE_DIRS =[ os.path.join(BASE_DIR, 'imager/templates')]
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = 'tmp/activation'

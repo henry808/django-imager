@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block body %}
+    {% if user.is_authenticated %}
+        {% load photo_extras %}
+        {% load thumbnail %}
+        <div>
+            <h4>Library View</h4>
+            <li><a href="{% url 'upload_photo' %}">Upload new photo</a></li>
+            <li><a href="{% url 'create_album' %}">Create new album</a></li>
+            <h3>Photos</h3>
+            <ul>
+                {% for photo in object_list|viewable_user:user %}
+                    <li>
+                        <p>Date uploaded: {{ photo.date_uploaded }}</p>
+                        {% thumbnail photo.picture "80x80" as im %}
+                            <img src="{{ im.url }}">
+                        {% empty %}
+                            <p>No image: {{ im.url }}</p>
+                        {% endthumbnail %}
+                        {% if photo.user = user %}
+                            <p><a href="{% url 'edit_photo' photo.pk %}">Edit</a></p>
+                        {% endif %}
+                    </li>
+                {% endfor  %}
+            </ul>
+            <h3>Albums</h3>
+            <ul>
+                {% for album in user.albums.all %}
+                    <li>
+                        <p>Title: {{ album.title }}</p>
+                        {% thumbnail album.cover_photo.picture "80x80" as im %}
+                            <img src="{{ im.url }}">
+                        {% empty %}
+                            <p>No image: {{ im.url }}</p>
+                        {% endthumbnail %}
+                        {% if album.user = user %}
+                            <p><a href="{% url 'edit_album' album.pk %}">Edit</a></p>
+                        {% endif %}
+                    </li>
+                {% endfor  %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}
+<h2><img src="{{ MEDIA_URL }}{{ photo.picture }}"></h2>
