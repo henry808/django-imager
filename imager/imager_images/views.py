@@ -81,7 +81,7 @@ class CreateAlbum(CreateView):
         return self.render_to_response({'form': form})
 
     def get_form(self, form_class):
-        form = super(EditAlbum, self).get_form(form_class)
+        form = super(CreateAlbum, self).get_form(form_class)
         filter1 = Photo.objects.filter(user=self.request.user)
         form.fields['photos'].queryset = filter1
         form.fields['cover_photo'].queryset = filter1
