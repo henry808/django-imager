@@ -42,7 +42,7 @@ class Base(Configuration):
         'imagerapp',
         'imager_images',
         'registration',
-        'debug_toolbar',
+#        'debug_toolbar',
         'sorl.thumbnail',
     )
 
@@ -143,7 +143,7 @@ class Dev(Base):
         'imagerapp',
         'imager_images',
         'registration',
-        'debug_toolbar',
+#        'debug_toolbar',
         'sorl.thumbnail',
     )
 
