@@ -15,7 +15,7 @@ from imager_images.models import Album, Photo
 from selenium import webdriver
 import os
 
-TEST_DOMAIN_NAME = "http://127.0.0.1:8081"
+TEST_DOMAIN_NAME = "http:/127.0.0.1:8081"
 
 # class UserFactory(factory.django.DjangoModelFactory):
 #     class Meta:
@@ -457,21 +457,20 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         super(UserProfileDetailTestCase, self).tearDown()
 
     def test_goto_homepage(self):
-
-        import pdb; pdb.set_trace()
         self.driver.get(self.live_server_url)
         self.assertIn("Home", self.driver.title)
 
-    # def test_login(self):   os.path.join(TEST_DOMAIN_NAME, reverse('home'))
-    #     self.driver.get(TEST_DOMAIN_NAME + reverse('auth_login'))
-    #     username_field = self.driver.find_element_by_id('id_username')
-    #     username_field.send_keys('user1')
-    #     password_field = self.driver.find_element_by_id('id_password')
-    #     password_field.send_keys('pass')
-    #     form = self.driver.find_element_by_tag_name('form')
-    #     form.submit()
-    #     self.assertIn("Home", self.driver.title)
-    #     self.assertIn("user1", self.driver.body)
+    def test_login(self):   # os.path.join(TEST_DOMAIN_NAME, reverse('home'))
+        self.driver.get(TEST_DOMAIN_NAME + reverse('auth_login'))
+        username_field = self.driver.find_element_by_id('id_username')
+        username_field.send_keys('user1')
+        password_field = self.driver.find_element_by_id('id_password')
+        password_field.send_keys('pass')
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+        self.assertIn("Home", self.driver.title)
+        self.assertIn("user1", self.driver.page_source)
+
 
 
 # DOMAIN_NAME = 'http://127.0.0.1:8081'
