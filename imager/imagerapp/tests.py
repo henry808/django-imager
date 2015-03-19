@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import LiveServerTestCase
 from django.test import Client
 
 import datetime
@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from registration.models import RegistrationProfile
 from django.core.urlresolvers import reverse
 
+from selenium import webdriver
 import factory
 import factory.django
 from imager_images.models import Album, Photo
@@ -35,7 +36,7 @@ class PhotoFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: u'phototitle%d' % n)
     user = factory.SubFactory(UserFactory)
 
-class ImagerTestCase(TestCase):
+class ImagerTestCase(LiveServerTestCase):
     def setUp(self):
         bill = User(username='bill')
         sally = User(username='sally')
@@ -87,7 +88,7 @@ class ImagerTestCase(TestCase):
         self.assertEqual(isinstance(bill_unicode, unicode), True)
 
 
-class ImagerFollowTestCase(TestCase):
+class ImagerFollowTestCase(LiveServerTestCase):
     def setUp(self):
         self.bill = User(username='bill')
         self.sally = User(username='sally')
@@ -179,7 +180,7 @@ class ImagerFollowTestCase(TestCase):
             bill.unfollow(sally)
 
 
-class ImagerRegistration(TestCase):
+class ImagerRegistration(LiveServerTestCase):
     def setUp(self):
         self.user = {}
         self.user['bill'] = User.objects.create_user(username='bill',
@@ -266,7 +267,7 @@ class ImagerRegistration(TestCase):
         self.assertFalse(user1.is_active)
 
 
-class UserProfileViewTestCase(TestCase):
+class UserProfileViewTestCase(LiveServerTestCase):
     def setUp(self):
         # Setup a couple users with some content
         # PhotoFactory.reset_sequence()
@@ -323,7 +324,7 @@ class UserProfileViewTestCase(TestCase):
         self.assertNotIn(str(self.another_user.profile.phone), response.content)
 
 
-class UserProfileUpdateTestCase(TestCase):
+class UserProfileUpdateTestCase(LiveServerTestCase):
     def setUp(self):
         # Setup a couple users with some content
         # PhotoFactory.reset_sequence()
@@ -437,3 +438,35 @@ class UserProfileUpdateTestCase(TestCase):
                           datetime.date(1980, 3, 15))
         # Goes back to profile view after
         self.assertIn('Profile Detail View', response.content)
+
+# DOMAIN_NAME = 'http://127.0.0.1:8081'
+
+# class ImagerappBadUser(LiveServerTestCase):
+#     def setUp(self):
+#         self.driver = webdriver.Firefox()
+#         self.user = User(username='hi')
+#         self.user.set_password('goodbye')
+#         self.user.save()
+#         self.user.profile.phone = 1234567
+#         self.user.profile.save()
+
+#     def tearDown(self):
+#         self.driver.quit()
+
+    # def test_profile_redirect(self):
+    #     self.driver.get(DOMAIN_NAME + reverse('profile_detail', kwargs={'pk': self.user.profile.pk}))
+    #     self.driver.get(DOMAIN_NAME + reverse('profile_update', kwargs={'pk': self.user.profile.pk}))
+
+    # def test_stream_redirect(self):
+    #     print repr(DOMAIN_NAME + reverse('stream', kwargs={'pk': self.profile.user.pk}))
+
+    #     self.driver.get((DOMAIN_NAME + reverse('stream', kwargs={'pk': self.profile.user.pk}))
+
+    # def test_library_redirect(self):
+    #     self.driver.get(DOMAIN_NAME + reverse('library', kwargs={'pk': self.profile.user.pk}))
+
+    # def test_bad_login_redirect(self):
+    #     self.driver.get('auth_login')
+    #     self.driver.get_element_by_id('id_username').send_key('hi')
+    #     self.driver.get_element_by_id('id_password').send_key('wrong')
+    #     self.driver.get_element_by_tag_name('form').submit()
