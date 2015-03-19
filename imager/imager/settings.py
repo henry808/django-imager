@@ -154,6 +154,8 @@ class Dev(Base):
 
     STATIC_PATH = os.path.join(BASE_DIR, 'static/')
 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
+
     STATICFILES_DIRS = (
         STATIC_PATH,
     )
