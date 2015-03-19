@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
+        {% block title %}
+        {% endblock %}
         <h1>Imager!</h1>
         {% if user.is_authenticated %}
             <h3>User: {{ user.username }}</h3>
