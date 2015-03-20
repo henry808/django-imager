@@ -449,7 +449,6 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         self.user = User(username='user1')
         self.user.set_password('pass')
         self.user.is_active = True
-        self.user.save()
 
     def tearDown(self):
         self.driver.quit()
@@ -459,7 +458,8 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         self.driver.get(self.live_server_url)
         self.assertIn("Home", self.driver.title)
 
-    def test_login(self):   # os.path.join(TEST_DOMAIN_NAME, reverse('home'))
+    def test_login(self):
+        self.user.save()
         self.driver.get(TEST_DOMAIN_NAME + reverse('auth_login'))
         username_field = self.driver.find_element_by_id('id_username')
         username_field.send_keys('user1')
@@ -470,5 +470,51 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         self.assertIn("Home", self.driver.title)
         self.assertIn("user1", self.driver.page_source)
 
+    def test_profile_populates(self):
+        self.user.first_name = "user_first"
+        self.user.last_name = "user_last"
+        self.user.email = "email@email.com"
+
+        self.user.save()
+        self.user.profile.phone = 1234
+        self.user.profile.birthday = datetime.date(1980, 3, 15)
+        self.user.profile.pic_privacy = 'PU'
+        self.user.birthday_privacy = 'PR'
+        self.user.phone_privacy = 'PU'
+        self.user.name_privacy = 'PR'
+        self.user.email_privacy = 'PR'
+        self.user.profile.save()
+        self.driver.get(TEST_DOMAIN_NAME + reverse('auth_login'))
+        username_field = self.driver.find_element_by_id('id_username')
+        username_field.send_keys('user1')
+        password_field = self.driver.find_element_by_id('id_password')
+        password_field.send_keys('pass')
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+        link = self.driver.find_element_by_link_text('Profile')
+        link.click()
+        self.assertIn("Profile Detail View", self.driver.page_source)
+        link = self.driver.find_element_by_link_text('Edit')
+        link.click()
+        # Profile page: see if user info is populated
+        info_list = [('id_email', self.user.email),
+                     ('id_first_name', self.user.first_name),
+                     ('id_last_name', self.user.last_name)]
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            self.assertIn(str(info[1]), field.get_attribute('value'))
+        # Profile page: see if profile info is populated
+        info_list = [('id_phone', self.user.profile.phone),
+                     ('id_birthday', self.user.profile.birthday),
+                     ('id_pic_privacy', self.user.profile.pic_privacy),
+                     ('id_birthday_privacy', self.user.profile.birthday_privacy),
+                     ('id_phone_privacy', self.user.profile.phone_privacy),
+                     ('id_name_privacy', self.user.profile.name_privacy),
+                     ('id_email_privacy', self.user.profile.email_privacy)]
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            self.assertIn(str(info[1]), field.get_attribute('value'))
 
 
+
+            
