@@ -472,35 +472,38 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         self.assertIn("user1", self.driver.page_source)
 
 
+class ImagerappBadUser(LiveServerTestCase):
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        self.user = User(username='hi')
+        self.user.set_password('goodbye')
+        self.user.save()
+        self.user.profile.phone = 1234567
+        self.user.profile.save()
 
-# DOMAIN_NAME = 'http://127.0.0.1:8081'
+    def tearDown(self):
+        self.driver.refresh()
+        self.driver.quit()
 
-# class ImagerappBadUser(LiveServerTestCase):
-#     def setUp(self):
-#         self.driver = webdriver.Firefox()
-#         self.user = User(username='hi')
-#         self.user.set_password('goodbye')
-#         self.user.save()
-#         self.user.profile.phone = 1234567
-#         self.user.profile.save()
+    def test_profile_redirect(self):
+        self.driver.get(self.live_server_url + reverse('profile_detail', kwargs={'pk': self.user.profile.pk}))
+        # import pdb; pdb.set_trace()
+        self.assertIn('Log in', self.driver.page_source)
+        self.driver.get(self.live_server_url + reverse('profile_update', kwargs={'pk': self.user.profile.pk}))
+        self.assertIn('Log in', self.driver.page_source)
 
-#     def tearDown(self):
-#         self.driver.quit()
 
-    # def test_profile_redirect(self):
-    #     self.driver.get(DOMAIN_NAME + reverse('profile_detail', kwargs={'pk': self.user.profile.pk}))
-    #     self.driver.get(DOMAIN_NAME + reverse('profile_update', kwargs={'pk': self.user.profile.pk}))
 
-    # def test_stream_redirect(self):
-    #     print repr(DOMAIN_NAME + reverse('stream', kwargs={'pk': self.profile.user.pk}))
+    def test_stream_redirect(self):
+        print repr(self.live_server_url + reverse('stream', kwargs={'pk': self.user.profile.pk}))
 
-    #     self.driver.get((DOMAIN_NAME + reverse('stream', kwargs={'pk': self.profile.user.pk}))
+        self.driver.get(self.live_server_url + reverse('stream', kwargs={'pk': self.user.profile.pk}))
 
-    # def test_library_redirect(self):
-    #     self.driver.get(DOMAIN_NAME + reverse('library', kwargs={'pk': self.profile.user.pk}))
+    def test_library_redirect(self):
+        self.driver.get(self.live_server_url + reverse('library', kwargs={pk: self.user.profile.pk}))
 
-    # def test_bad_login_redirect(self):
-    #     self.driver.get('auth_login')
-    #     self.driver.get_element_by_id('id_username').send_key('hi')
-    #     self.driver.get_element_by_id('id_password').send_key('wrong')
-    #     self.driver.get_element_by_tag_name('form').submit()
+    def test_bad_login_redirect(self):
+        self.driver.get('auth_login')
+        self.driver.get_element_by_id('id_username').send_key('hi')
+        self.driver.get_element_by_id('id_password').send_key('wrong')
+        self.driver.get_element_by_tag_name('form').submit()
