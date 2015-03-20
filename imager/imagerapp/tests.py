@@ -442,7 +442,7 @@ TEST_DOMAIN_NAME = "http:/127.0.0.1:8081"
 #         # Goes back to profile view after
 #         self.assertIn('Profile Detail View', response.content)
 #
-
+"""
 class UserProfileDetailTestCase(LiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
@@ -470,7 +470,7 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         form.submit()
         self.assertIn("Home", self.driver.title)
         self.assertIn("user1", self.driver.page_source)
-
+"""
 
 class ImagerappBadUser(LiveServerTestCase):
     def setUp(self):
@@ -492,18 +492,14 @@ class ImagerappBadUser(LiveServerTestCase):
         self.driver.get(self.live_server_url + reverse('profile_update', kwargs={'pk': self.user.profile.pk}))
         self.assertIn('Log in', self.driver.page_source)
 
-
-
     def test_stream_redirect(self):
-        print repr(self.live_server_url + reverse('stream', kwargs={'pk': self.user.profile.pk}))
-
         self.driver.get(self.live_server_url + reverse('stream', kwargs={'pk': self.user.profile.pk}))
 
     def test_library_redirect(self):
-        self.driver.get(self.live_server_url + reverse('library', kwargs={pk: self.user.profile.pk}))
+        self.driver.get(self.live_server_url + reverse('library', kwargs={'pk': self.user.profile.pk}))
 
     def test_bad_login_redirect(self):
-        self.driver.get('auth_login')
-        self.driver.get_element_by_id('id_username').send_key('hi')
-        self.driver.get_element_by_id('id_password').send_key('wrong')
-        self.driver.get_element_by_tag_name('form').submit()
+        self.driver.get(self.live_server_url + reverse('auth_login'))
+        self.driver.find_element_by_id('id_username').send_keys('hi')
+        self.driver.find_element_by_id('id_password').send_keys('wrong')
+        self.driver.find_element_by_tag_name('form').submit()
