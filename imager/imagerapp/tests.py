@@ -15,29 +15,29 @@ from imager_images.models import Album, Photo
 from selenium import webdriver
 import os
 
-TEST_DOMAIN_NAME = "http:/127.0.0.1:8081"
+TEST_DOMAIN_NAME = "http://127.0.0.1:8081"
 
-# class UserFactory(factory.django.DjangoModelFactory):
-#     class Meta:
-#         model = User
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
 
-#     username = factory.Sequence(lambda n: u'username%d' % n)
-
-
-# class AlbumFactory(factory.django.DjangoModelFactory):
-#     class Meta:
-#         model = Album
-
-#     title = factory.Sequence(lambda n: u'albumtitle%d' % n)
-#     user = factory.SubFactory(UserFactory)
+    username = factory.Sequence(lambda n: u'username%d' % n)
 
 
-# class PhotoFactory(factory.django.DjangoModelFactory):
-#     class Meta:
-#         model = Photo
+class AlbumFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Album
 
-#     title = factory.Sequence(lambda n: u'phototitle%d' % n)
-#     user = factory.SubFactory(UserFactory)
+    title = factory.Sequence(lambda n: u'albumtitle%d' % n)
+    user = factory.SubFactory(UserFactory)
+
+
+class PhotoFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Photo
+
+    title = factory.Sequence(lambda n: u'phototitle%d' % n)
+    user = factory.SubFactory(UserFactory)
 
 # class ImagerTestCase(TestCase):
 #     def setUp(self):
@@ -442,7 +442,7 @@ TEST_DOMAIN_NAME = "http:/127.0.0.1:8081"
 #         # Goes back to profile view after
 #         self.assertIn('Profile Detail View', response.content)
 #
-"""
+
 class UserProfileDetailTestCase(LiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
@@ -470,7 +470,7 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         form.submit()
         self.assertIn("Home", self.driver.title)
         self.assertIn("user1", self.driver.page_source)
-"""
+
 
 class ImagerappBadUser(LiveServerTestCase):
     def setUp(self):
@@ -484,6 +484,7 @@ class ImagerappBadUser(LiveServerTestCase):
     def tearDown(self):
         self.driver.refresh()
         self.driver.quit()
+        super(ImagerappBadUser).tearDown()
 
     def test_profile_redirect(self):
         self.driver.get(self.live_server_url + reverse('profile_detail', kwargs={'pk': self.user.profile.pk}))
@@ -492,11 +493,40 @@ class ImagerappBadUser(LiveServerTestCase):
         self.driver.get(self.live_server_url + reverse('profile_update', kwargs={'pk': self.user.profile.pk}))
         self.assertIn('Log in', self.driver.page_source)
 
-    def test_stream_redirect(self):
-        self.driver.get(self.live_server_url + reverse('stream', kwargs={'pk': self.user.profile.pk}))
+    def test_upload_photo_redirect(self):
+        self.driver.get(self.live_server_url + reverse('upload_photo'))
+        self.assertIn('Log in', self.driver.page_source)
 
-    def test_library_redirect(self):
+    def test_edit_photo_hack(self):
+        photo = PhotoFactory(user=self.user, published='PR')
+        photo.picture = 'else'
+        photo.save()
+
+        other = User(username='guy')
+        other.set_password('something')
+        other.save()
+        other.profile.phone = 7654321
+        other.profile.save()
+        self.client.login(username='guy', password='something')
+
+        self.driver.get(self.live_server_url + reverse('edit_photo', kwargs={'pk': photo.pk}))
+        self.assertIn('Log in', self.driver.page_source)
+
+    def test_edit_album_redirect(self):
         self.driver.get(self.live_server_url + reverse('library', kwargs={'pk': self.user.profile.pk}))
+        self.assertIn('Log in', self.driver.page_source)
+
+    def test_edit_album_hack(self):
+        other = User(username='guy')
+        other.set_password('something')
+        other.save()
+        other.profile.phone = 7654321
+        other.profile.save()
+
+        self.driver.get(self.live_server_url + reverse('home'))
+        self.client.login(username='guy', password='something')
+        self.driver.get(self.live_server_url + reverse('library', kwargs={'pk': self.user.profile.pk}))
+        self.assertIn('Log in', self.driver.page_source)
 
     def test_bad_login_redirect(self):
         self.driver.get(self.live_server_url + reverse('auth_login'))
