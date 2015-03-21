@@ -6,15 +6,20 @@ from imagerapp.models import ImagerProfile
 from django.contrib.auth.models import User
 from registration.models import RegistrationProfile
 from django.core.urlresolvers import reverse
+from imager.settings import MEDIA_ROOT
+
 
 import factory
 import factory.django
 from imager_images.models import Album, Photo
 
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 import os
 
 TEST_DOMAIN_NAME = "http:/127.0.0.1:8081"
+
+Test_File_Location = os.path.join(MEDIA_ROOT, "Computerpack.jpg")
 
 # class UserFactory(factory.django.DjangoModelFactory):
 #     class Meta:
@@ -458,8 +463,8 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         self.driver.get(self.live_server_url)
         self.assertIn("Home", self.driver.title)
 
-    def test_login(self):
-        self.user.save()
+    def login_user(self):
+        """login user"""
         self.driver.get(TEST_DOMAIN_NAME + reverse('auth_login'))
         username_field = self.driver.find_element_by_id('id_username')
         username_field.send_keys('user1')
@@ -467,6 +472,11 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         password_field.send_keys('pass')
         form = self.driver.find_element_by_tag_name('form')
         form.submit()
+
+
+    def test_login(self):
+        self.user.save()
+        self.login_user()
         self.assertIn("Home", self.driver.title)
         self.assertIn("user1", self.driver.page_source)
 
@@ -479,18 +489,12 @@ class UserProfileDetailTestCase(LiveServerTestCase):
         self.user.profile.phone = 1234
         self.user.profile.birthday = datetime.date(1980, 3, 15)
         self.user.profile.pic_privacy = 'PU'
-        self.user.birthday_privacy = 'PR'
-        self.user.phone_privacy = 'PU'
-        self.user.name_privacy = 'PR'
-        self.user.email_privacy = 'PR'
+        self.user.profile.birthday_privacy = 'PR'
+        self.user.profile.phone_privacy = 'PU'
+        self.user.profile.name_privacy = 'PR'
+        self.user.profile.email_privacy = 'PR'
         self.user.profile.save()
-        self.driver.get(TEST_DOMAIN_NAME + reverse('auth_login'))
-        username_field = self.driver.find_element_by_id('id_username')
-        username_field.send_keys('user1')
-        password_field = self.driver.find_element_by_id('id_password')
-        password_field.send_keys('pass')
-        form = self.driver.find_element_by_tag_name('form')
-        form.submit()
+        self.login_user()
         link = self.driver.find_element_by_link_text('Profile')
         link.click()
         self.assertIn("Profile Detail View", self.driver.page_source)
@@ -510,11 +514,69 @@ class UserProfileDetailTestCase(LiveServerTestCase):
                      ('id_birthday_privacy', self.user.profile.birthday_privacy),
                      ('id_phone_privacy', self.user.profile.phone_privacy),
                      ('id_name_privacy', self.user.profile.name_privacy),
-                     ('id_email_privacy', self.user.profile.email_privacy)]
+                     ('id_email_privacy', self.user.profile.email_privacy),
+                     ('id_picture', self.user.profile.picture.name)]
         for info in info_list:
             field = self.driver.find_element_by_id(info[0])
-            self.assertIn(str(info[1]), field.get_attribute('value'))
+            if info[0] == 'id_picture':
+                self.assertIn(str(info[1]), self.driver.page_source)
+            else:
+                self.assertIn(str(info[1]), field.get_attribute('value'))
 
+    def test_profile_form_saves(self):
+        """Test to make sure all data in a filled out form saves properly"""
+        self.user.save()
+        self.login_user()
+        link = self.driver.find_element_by_link_text('Profile')
+        link.click()
+        self.assertIn("Profile Detail View", self.driver.page_source)
+        link = self.driver.find_element_by_link_text('Edit')
+        link.click()
+        first_name = 'new_first_name'
+        last_name = 'new_last_name'
+        email = 'newem@email.com'
+        phone = 999
+        date = "4/14/1970"
+        public = 'PU'
 
+        # Profile page: Fill Out User Info
+        info_list = [('id_email', email),
+                     ('id_first_name', first_name),
+                     ('id_last_name', last_name)]
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            field.send_keys(info[1])
+        # Profile page: Fill Out Profile Info
+        info_list = [('id_phone', phone),
+                     ('id_birthday', date),
+                     ('id_picture', Test_File_Location),
+                     ('id_pic_privacy', public),
+                     ('id_birthday_privacy', public),
+                     ('id_phone_privacy', public),
+                     ('id_name_privacy', public),
+                     ('id_email_privacy', public)]
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            if info[0] == 'id_birthday':
+                field.clear()
+            field.send_keys(info[1])
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+        # Check if info is in the profile view
+        self.driver.implicitly_wait(4)
+        self.assertIn("Profile Detail View", self.driver.page_source)
+        self.user = User.objects.get(username=self.user.username)
+        check_inputs = [(self.user.first_name, first_name),
+                        (self.user.last_name, last_name),
+                        (self.user.email, email),
+                        (self.user.profile.phone, phone),
+                        (self.user.profile.birthday,  datetime.date(1970, 4, 14)),
+                        (self.user.profile.pic_privacy, public),
+                        (self.user.profile.birthday_privacy, public),
+                        (self.user.profile.phone_privacy, public),
+                        (self.user.profile.name_privacy, public),
+                        (self.user.profile.email_privacy, public)]
 
-            
+        for field in check_inputs:
+            self.assertEquals(field[0], field[1])
+        self.assertIn("Computerpack", self.user.profile.picture.name)
