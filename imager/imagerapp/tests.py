@@ -7,7 +7,7 @@ from imagerapp.models import ImagerProfile
 from django.contrib.auth.models import User
 from registration.models import RegistrationProfile
 from django.core.urlresolvers import reverse
-from imager.settings import MEDIA_ROOT
+from imager.settings import STATIC_ROOT
 
 
 from selenium import webdriver
@@ -19,7 +19,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 import os
 
-Test_File_Location = os.path.join(MEDIA_ROOT, "Computerpack.jpg")
+Test_File_Location = os.path.join(STATIC_ROOT, "Testimage.jpg")
 
 TEST_DOMAIN_NAME = "http://127.0.0.1:8081"
 
@@ -563,7 +563,9 @@ class UserProfileDetailTestCase(LiveServerTestCase):
                 field.clear()
             field.send_keys(info[1])
         form = self.driver.find_element_by_tag_name('form')
+        import pdb; pdb.set_trace()
         form.submit()
+
         # Check if info is in the profile view
         self.driver.implicitly_wait(4)
         self.assertIn("Profile Detail View", self.driver.page_source)
@@ -581,7 +583,7 @@ class UserProfileDetailTestCase(LiveServerTestCase):
 
         for field in check_inputs:
             self.assertEquals(field[0], field[1])
-        self.assertIn("Computerpack", self.user.profile.picture.name)
+        self.assertIn("Testimage", self.user.profile.picture.name)
 
 
 class ImagerappBadUser(LiveServerTestCase):
