@@ -563,7 +563,6 @@ class UserProfileDetailTestCase(LiveServerTestCase):
                 field.clear()
             field.send_keys(info[1])
         form = self.driver.find_element_by_tag_name('form')
-        import pdb; pdb.set_trace()
         form.submit()
 
         # Check if info is in the profile view
