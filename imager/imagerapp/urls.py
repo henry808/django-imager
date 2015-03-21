@@ -15,10 +15,4 @@ urlpatterns = patterns('',
                        # url(r'^update_action/(?P<pk>\d+)$',
                        #     'imagerapp.views.profile_update_view',
                        #     name='profile_update_action'),
-    # Examples:
-
-    # url(r'^$', 'imager.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    # url(r'^admin/', include(admin.site.urls)),
 )
