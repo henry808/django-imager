@@ -332,37 +332,67 @@ class UserPhotoAlbumFormTestCase(LiveServerTestCase):
     #     self.assertIn("Testimage", photo.picture.name)
 
 
-    def test_create_album(self):
+    def test_edit_photo(self):
         self.user.save()
+        self.login_user('user1', 'pass')
         self.photo1 = PhotoFactory(user=self.user, published='PR')
         self.photo1.save()
-        self.login_user('user1', 'pass')
-        self.driver.get(TEST_DOMAIN_NAME + reverse('create_album'))
-
+        self.driver.get(TEST_DOMAIN_NAME +
+                        reverse('edit_photo', kwargs={'pk': self.photo1.pk}))
+        import pdb; pdb.set_trace()
         # Fill out form
-        title = "Test Album Title"
-        description = "This is a test description."
+        title = "New Title"
+        description = "New description."
         published = "PU"
         info_list = [('id_title', title),
-                     ('id_cover_photo', self.photo1.title),
                      ('id_description', description),
                      ('id_published', published)]
-
         for info in info_list:
             field = self.driver.find_element_by_id(info[0])
+            if info[0] == 'id_title':
+                field.clear()
             field.send_keys(info[1])
         form = self.driver.find_element_by_tag_name('form')
         form.submit()
-        self.driver.implicitly_wait(4)
-
         # Check if photo and info is in database after submitting form
         self.assertIn("Library View", self.driver.page_source)
-        album = Album.objects.get(title=title)
-
-
-        check_inputs = [(album.title, title),
-                        (album.description, description),
-                        (album.published, published)]
+        photo = Photo.objects.get(pk=self.photo1.pk)
+        check_inputs = [(photo.title, title),
+                        (photo.description, description),
+                        (photo.published, published)]
         for field in check_inputs:
             self.assertEquals(field[0], field[1])
-        self.assertEqual(self.photo1.title, album.cover_photo.title)
+
+
+    # def test_create_album(self):
+    #     self.user.save()
+    #     self.photo1 = PhotoFactory(user=self.user, published='PR')
+    #     self.photo1.save()
+    #     self.login_user('user1', 'pass')
+    #     self.driver.get(TEST_DOMAIN_NAME + reverse('create_album'))
+
+    #     # Fill out form
+    #     title = "Test Album Title"
+    #     description = "This is a test description."
+    #     published = "PU"
+    #     info_list = [('id_title', title),
+    #                  ('id_cover_photo', self.photo1.title),
+    #                  ('id_description', description),
+    #                  ('id_published', published)]
+
+    #     for info in info_list:
+    #         field = self.driver.find_element_by_id(info[0])
+    #         field.send_keys(info[1])
+    #     form = self.driver.find_element_by_tag_name('form')
+    #     form.submit()
+    #     self.driver.implicitly_wait(4)
+
+    #     # Check if album and info is in database after submitting form
+    #     self.assertIn("Library View", self.driver.page_source)
+    #     album = Album.objects.get(title=title)
+    #     check_inputs = [(album.title, title),
+    #                     (album.description, description),
+    #                     (album.published, published)]
+    #     for field in check_inputs:
+    #         self.assertEquals(field[0], field[1])
+    #     self.assertEqual(self.photo1.title, album.cover_photo.title)
