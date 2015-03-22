@@ -27,7 +27,7 @@ def profile_update_view(request, *args, **kwargs):
     # import pdb; pdb.set_trace()
     if request.method == 'POST':
         # For submission of form for updating information...
-        form = ProfileForm(request.POST, instance=profile)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             user.first_name = form.cleaned_data.get('first_name')

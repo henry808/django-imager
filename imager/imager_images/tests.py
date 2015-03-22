@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, LiveServerTestCase
 from django.test import Client
 from django.core.urlresolvers import reverse
 
@@ -8,11 +8,18 @@ from django.contrib.auth.models import User
 import factory
 import factory.django
 from imager_images.models import Album, Photo
+from imager.settings import STATIC_ROOT
 
-from django.core.files.uploadedfile import SimpleUploadedFile
+# from django.core.files.uploadedfile import SimpleUploadedFile
+
+from selenium import webdriver
+import os
 
 from imager.settings import BASE_DIR
 
+Test_File_Location = os.path.join(STATIC_ROOT, "Testimage.jpg")
+
+TEST_DOMAIN_NAME = "http://127.0.0.1:8081"
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -238,28 +245,174 @@ class EditingandUploadingPhotosTestCase(TestCase):
                  'user': self.user,
                  'published': 'PU'})
         self.assertIn('Library', response.content)
-        # pic_file = SimpleUploadedFile("pictures.jpg", bin(2413241))
-        # form = response.context['form']
-        # form.fields['title'] = 'Title1'
-        # form.fields['picture'] = pic_file
-        # form.fields['user'] = self.user
-        
-        # response = self.client.post(reverse('upload_photo'), form)
 
 
-        # self.assertFieldOutput(EmailField, {'a@a.com': 'a@a.com'}
-        # self.assertFormError(response, form, 'title', errors)
-        #print Photo.objects.all()
-        
-        
-        # 
+    def test_anonymous_cant_see_stream(self):
+        # Test anonymous user cannot view a stream
+        response = self.client.get(
+            reverse('stream', kwargs={'pk': self.user.profile.pk}),
+            follow=True)
+        # Verifies that the anonymous user is redirected to the login page when not logged in
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('Log in', response.content)
+
+class UserPhotoAlbumFormTestCase(LiveServerTestCase):
+    """This class is for testing user photo and album forms"""
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        super(UserPhotoAlbumFormTestCase, self).setUp
+        self.user = User(username='user1')
+        self.user.set_password('pass')
+        self.user.is_active = True
+
+    def tearDown(self):
+        self.driver.refresh()
+        self.driver.quit()
+        super(UserPhotoAlbumFormTestCase, self).tearDown()
+
+    def login_user(self, user, password):
+        """login user"""
+        self.driver.get(TEST_DOMAIN_NAME + reverse('auth_login'))
+        username_field = self.driver.find_element_by_id('id_username')
+        username_field.send_keys(user)
+        password_field = self.driver.find_element_by_id('id_password')
+        password_field.send_keys(password)
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+
+    def test_upload_photo(self):
+        self.user.save()
+        self.login_user('user1', 'pass')
+        self.driver.get(TEST_DOMAIN_NAME + reverse('upload_photo'))
+        # Fill out form
+        title = "Test title"
+        description = "This is a test description."
+        published = "PU"
+        info_list = [('id_picture', Test_File_Location),
+                     ('id_title', title),
+                     ('id_description', description),
+                     ('id_published', published)]
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            field.send_keys(info[1])
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+        self.driver.implicitly_wait(4)
+        # Check if photo and info is in database after submitting form
+        self.assertIn("Library View", self.driver.page_source)
+        photo = Photo.objects.get(title=title)
 
 
-    # def test_anonymous_cant_see_stream(self):
-    #     # Test anonymous user cannot view a stream
-    #     response = self.client.get(
-    #         reverse('stream', kwargs={'pk': self.user.profile.pk}),
-    #         follow=True)
-    #     # Verifies that the anonymous user is redirected to the login page when not logged in
-    #     self.assertEquals(response.status_code, 200)
-    #     self.assertIn('Log in', response.content)
+        check_inputs = [(photo.title, title),
+                        (photo.description, description),
+                        (photo.published, published)]
+        for field in check_inputs:
+            self.assertEquals(field[0], field[1])
+        self.assertIn("Testimage", photo.picture.name)
+
+
+    def test_edit_photo(self):
+        self.user.save()
+        self.login_user('user1', 'pass')
+        self.photo1 = PhotoFactory(user=self.user, published='PR')
+        self.photo1.save()
+        self.driver.get(TEST_DOMAIN_NAME +
+                        reverse('edit_photo', kwargs={'pk': self.photo1.pk}))
+        # Fill out form
+        title = "New Title"
+        description = "New description."
+        published = "PU"
+        info_list = [('id_title', title),
+                     ('id_description', description),
+                     ('id_published', published)]
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            if info[0] == 'id_title':
+                field.clear()
+            field.send_keys(info[1])
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+        # Check if photo edited photo info is in database after submitting form
+        self.assertIn("Library View", self.driver.page_source)
+        photo = Photo.objects.get(pk=self.photo1.pk)
+        check_inputs = [(photo.title, title),
+                        (photo.description, description),
+                        (photo.published, published)]
+        for field in check_inputs:
+            self.assertEquals(field[0], field[1])
+
+
+    def test_create_album(self):
+        self.user.save()
+        self.photo1 = PhotoFactory(user=self.user, published='PR')
+        self.photo1.save()
+        self.login_user('user1', 'pass')
+        self.driver.get(TEST_DOMAIN_NAME + reverse('create_album'))
+
+        # Fill out form
+        title = "Test Album Title"
+        description = "This is a test description."
+        published = "PU"
+        info_list = [('id_title', title),
+                     ('id_cover_photo', self.photo1.title),
+                     ('id_description', description),
+                     ('id_published', published)]
+
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            field.send_keys(info[1])
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+        self.driver.implicitly_wait(4)
+
+        # Check if album and info is in database after submitting form
+        self.assertIn("Library View", self.driver.page_source)
+        album = Album.objects.get(title=title)
+        check_inputs = [(album.title, title),
+                        (album.description, description),
+                        (album.published, published)]
+        for field in check_inputs:
+            self.assertEquals(field[0], field[1])
+        self.assertEqual(self.photo1.title, album.cover_photo.title)
+
+
+    def test_edit_album(self):
+        self.user.save()
+        self.photo1 = PhotoFactory(user=self.user, published='PU')
+        self.photo1.save()
+        self.album = AlbumFactory(user=self.user)
+        self.album.save()
+        self.login_user('user1', 'pass')
+        # create a second photo to edit the cover photo to
+        self.photo2 = PhotoFactory(user=self.user, published='PU')
+        self.photo2.save()
+        self.driver.get(TEST_DOMAIN_NAME +
+                        reverse('edit_album', kwargs={'pk': self.album.pk}))
+        # Fill out form
+        title = "Edited Album Title"
+        description = "This is a test description for edited album."
+        published = "PU"
+        new_cover_photo = self.photo2
+        info_list = [('id_title', title),
+                     ('id_cover_photo', new_cover_photo.title),
+                     ('id_description', description),
+                     ('id_published', published)]
+
+        for info in info_list:
+            field = self.driver.find_element_by_id(info[0])
+            if info[0] == 'id_title':
+                field.clear()
+            field.send_keys(info[1])
+        form = self.driver.find_element_by_tag_name('form')
+        form.submit()
+        self.driver.implicitly_wait(4)
+
+        # Check if album and info is in database after submitting form
+        self.assertIn("Library View", self.driver.page_source)
+        album = Album.objects.get(pk=self.album.pk)
+        check_inputs = [(album.title, title),
+                        (album.description, description),
+                        (album.published, published)]
+        for field in check_inputs:
+            self.assertEquals(field[0], field[1])
+        self.assertEqual(new_cover_photo, album.cover_photo)
