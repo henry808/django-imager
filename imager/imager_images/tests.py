@@ -339,7 +339,6 @@ class UserPhotoAlbumFormTestCase(LiveServerTestCase):
         self.photo1.save()
         self.driver.get(TEST_DOMAIN_NAME +
                         reverse('edit_photo', kwargs={'pk': self.photo1.pk}))
-        import pdb; pdb.set_trace()
         # Fill out form
         title = "New Title"
         description = "New description."
@@ -354,7 +353,7 @@ class UserPhotoAlbumFormTestCase(LiveServerTestCase):
             field.send_keys(info[1])
         form = self.driver.find_element_by_tag_name('form')
         form.submit()
-        # Check if photo and info is in database after submitting form
+        # Check if photo edited photo info is in database after submitting form
         self.assertIn("Library View", self.driver.page_source)
         photo = Photo.objects.get(pk=self.photo1.pk)
         check_inputs = [(photo.title, title),
