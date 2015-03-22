@@ -450,6 +450,7 @@ class UserProfileUpdateTestCase(TestCase):
 
 
 class UserProfileDetailTestCase(LiveServerTestCase):
+    """This class is for testing user login form, and profile form"""
     def setUp(self):
         self.driver = webdriver.Firefox()
         super(UserProfileDetailTestCase, self).setUp

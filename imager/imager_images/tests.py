@@ -287,9 +287,9 @@ class UserPhotoAlbumFormTestCase(LiveServerTestCase):
         self.driver.quit()
         super(UserPhotoAlbumFormTestCase, self).tearDown()
 
-    def test_goto_homepage(self):
-        self.driver.get(self.live_server_url)
-        self.assertIn("Home", self.driver.title)
+    # def test_goto_homepage(self):
+    #     self.driver.get(self.live_server_url)
+    #     self.assertIn("Home", self.driver.title)
 
     def login_user(self, user, password):
         """login user"""
@@ -301,162 +301,68 @@ class UserPhotoAlbumFormTestCase(LiveServerTestCase):
         form = self.driver.find_element_by_tag_name('form')
         form.submit()
 
-    def test_upload_photo(self):
-        self.user.save()
-        self.login_user('user1', 'pass')
-        self.driver.get(TEST_DOMAIN_NAME + reverse('upload_photo'))
-        # Fill out form
-        title = "Test title"
-        description = "This is a test description."
-        published = "PU"
-        info_list = [('id_picture', Test_File_Location),
-                     ('id_title', title),
-                     ('id_description', description),
-                     ('id_published', published)]
-        import pdb; pdb.set_trace()
-        for info in info_list:
-            field = self.driver.find_element_by_id(info[0])
-            field.send_keys(info[1])
-        form = self.driver.find_element_by_tag_name('form')
-        form.submit()
-        self.driver.implicitly_wait(4)
-        # Check if photo and info is in database after submitting form
-        self.assertIn("Library View", self.driver.page_source)
-        photo = Photo.objects.get(title=title)
+    # def test_upload_photo(self):
+    #     self.user.save()
+    #     self.login_user('user1', 'pass')
+    #     self.driver.get(TEST_DOMAIN_NAME + reverse('upload_photo'))
+    #     # Fill out form
+    #     title = "Test title"
+    #     description = "This is a test description."
+    #     published = "PU"
+    #     info_list = [('id_picture', Test_File_Location),
+    #                  ('id_title', title),
+    #                  ('id_description', description),
+    #                  ('id_published', published)]
+    #     for info in info_list:
+    #         field = self.driver.find_element_by_id(info[0])
+    #         field.send_keys(info[1])
+    #     form = self.driver.find_element_by_tag_name('form')
+    #     form.submit()
+    #     self.driver.implicitly_wait(4)
+    #     # Check if photo and info is in database after submitting form
+    #     self.assertIn("Library View", self.driver.page_source)
+    #     photo = Photo.objects.get(title=title)
 
 
-        check_inputs = [(photo.title, title),
-                        (photo.description, description),
-                        (photo.published, published)]
-        for field in check_inputs:
-            self.assertEquals(field[0], field[1])
-        self.assertIn("Testimage", photo.picture.name)
+    #     check_inputs = [(photo.title, title),
+    #                     (photo.description, description),
+    #                     (photo.published, published)]
+    #     for field in check_inputs:
+    #         self.assertEquals(field[0], field[1])
+    #     self.assertIn("Testimage", photo.picture.name)
 
 
     def test_create_album(self):
         self.user.save()
+        self.photo1 = PhotoFactory(user=self.user, published='PR')
+        self.photo1.save()
         self.login_user('user1', 'pass')
         self.driver.get(TEST_DOMAIN_NAME + reverse('create_album'))
+
         # Fill out form
         title = "Test Album Title"
         description = "This is a test description."
         published = "PU"
         info_list = [('id_title', title),
-                     ('id_picture', Test_File_Location),
+                     ('id_cover_photo', self.photo1.title),
                      ('id_description', description),
                      ('id_published', published)]
-        import pdb; pdb.set_trace()
+
         for info in info_list:
             field = self.driver.find_element_by_id(info[0])
             field.send_keys(info[1])
         form = self.driver.find_element_by_tag_name('form')
         form.submit()
         self.driver.implicitly_wait(4)
+
         # Check if photo and info is in database after submitting form
         self.assertIn("Library View", self.driver.page_source)
-        photo = Photo.objects.get(title=title)
+        album = Album.objects.get(title=title)
 
 
-        check_inputs = [(photo.title, title),
-                        (photo.description, description),
-                        (photo.published, published)]
+        check_inputs = [(album.title, title),
+                        (album.description, description),
+                        (album.published, published)]
         for field in check_inputs:
             self.assertEquals(field[0], field[1])
-        self.assertIn("Testimage", photo.picture.name)
-    # def test_profile_populates(self):
-    #     self.user.save()
-    #     self.user.profile.phone = 1234
-    #     self.user.profile.birthday = datetime.date(1980, 3, 15)
-    #     self.user.profile.pic_privacy = 'PU'
-    #     self.user.profile.birthday_privacy = 'PR'
-    #     self.user.profile.phone_privacy = 'PU'
-    #     self.user.profile.name_privacy = 'PR'
-    #     self.user.profile.email_privacy = 'PR'
-    #     self.user.profile.save()
-    #     self.login_user()
-    #     link = self.driver.find_element_by_link_text('Profile')
-    #     link.click()
-    #     self.assertIn("Profile Detail View", self.driver.page_source)
-    #     link = self.driver.find_element_by_link_text('Edit')
-    #     link.click()
-    #     # Profile page: see if user info is populated
-    #     info_list = [('id_email', self.user.email),
-    #                  ('id_first_name', self.user.first_name),
-    #                  ('id_last_name', self.user.last_name)]
-    #     for info in info_list:
-    #         field = self.driver.find_element_by_id(info[0])
-    #         self.assertIn(str(info[1]), field.get_attribute('value'))
-    #     # Profile page: see if profile info is populated
-    #     info_list = [('id_phone', self.user.profile.phone),
-    #                  ('id_birthday', self.user.profile.birthday),
-    #                  ('id_pic_privacy', self.user.profile.pic_privacy),
-    #                  ('id_birthday_privacy', self.user.profile.birthday_privacy),
-    #                  ('id_phone_privacy', self.user.profile.phone_privacy),
-    #                  ('id_name_privacy', self.user.profile.name_privacy),
-    #                  ('id_email_privacy', self.user.profile.email_privacy),
-    #                  ('id_picture', self.user.profile.picture.name)]
-    #     for info in info_list:
-    #         field = self.driver.find_element_by_id(info[0])
-    #         if info[0] == 'id_picture':
-    #             self.assertIn(str(info[1]), self.driver.page_source)
-    #         else:
-    #             self.assertIn(str(info[1]), field.get_attribute('value'))
-
-    # def test_profile_form_saves(self):
-    #     """Test to make sure all data in a filled out form saves properly"""
-    #     self.user.save()
-    #     self.login_user()
-    #     link = self.driver.find_element_by_link_text('Profile')
-    #     link.click()
-    #     self.assertIn("Profile Detail View", self.driver.page_source)
-    #     link = self.driver.find_element_by_link_text('Edit')
-    #     link.click()
-    #     first_name = 'new_first_name'
-    #     last_name = 'new_last_name'
-    #     email = 'newem@email.com'
-    #     phone = 999
-    #     date = "4/14/1970"
-    #     public = 'PU'
-
-    #     # Profile page: Fill Out User Info
-    #     info_list = [('id_email', email),
-    #                  ('id_first_name', first_name),
-    #                  ('id_last_name', last_name)]
-    #     for info in info_list:
-    #         field = self.driver.find_element_by_id(info[0])
-    #         field.send_keys(info[1])
-    #     # Profile page: Fill Out Profile Info
-    #     info_list = [('id_phone', phone),
-    #                  ('id_birthday', date),
-    #                  ('id_picture', Test_File_Location),
-    #                  ('id_pic_privacy', public),
-    #                  ('id_birthday_privacy', public),
-    #                  ('id_phone_privacy', public),
-    #                  ('id_name_privacy', public),
-    #                  ('id_email_privacy', public)]
-    #     for info in info_list:
-    #         field = self.driver.find_element_by_id(info[0])
-    #         if info[0] == 'id_birthday':
-    #             field.clear()
-    #         field.send_keys(info[1])
-    #     form = self.driver.find_element_by_tag_name('form')
-    #     form.submit()
-
-    #     # Check if info is in the profile view
-    #     self.driver.implicitly_wait(4)
-    #     self.assertIn("Profile Detail View", self.driver.page_source)
-    #     self.user = User.objects.get(username=self.user.username)
-    #     check_inputs = [(self.user.first_name, first_name),
-    #                     (self.user.last_name, last_name),
-    #                     (self.user.email, email),
-    #                     (self.user.profile.phone, phone),
-    #                     (self.user.profile.birthday,  datetime.date(1970, 4, 14)),
-    #                     (self.user.profile.pic_privacy, public),
-    #                     (self.user.profile.birthday_privacy, public),
-    #                     (self.user.profile.phone_privacy, public),
-    #                     (self.user.profile.name_privacy, public),
-    #                     (self.user.profile.email_privacy, public)]
-
-    #     for field in check_inputs:
-    #         self.assertEquals(field[0], field[1])
-    #     self.assertIn("Testimage", self.user.profile.picture.name)
+        self.assertEqual(self.photo1.title, album.cover_photo.title)
