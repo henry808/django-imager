@@ -74,13 +74,25 @@ class Base(Configuration):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'imager',
-            'USER': 'JustinKan',
-            'PASSWORD': '',
-            'HOST': '127.0.0.1',
+            'NAME': 'Imager',
+            'USER': 'Imager_User',
+            'PASSWORD': 'imagepass!',
+            'HOST': '52.11.154.16',
             'PORT': '5432',
         }
     }
+
+
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'NAME': 'imager',
+    #         'USER': 'JustinKan',
+    #         'PASSWORD': '',
+    #         'HOST': '127.0.0.1',
+    #         'PORT': '5432',
+    #     }
+    # }
 
     # DATABASES = {
     #     'default': {
@@ -113,6 +125,8 @@ class Base(Configuration):
     STATIC_URL = '/static/'
 
     STATIC_PATH = os.path.join(BASE_DIR, 'static/')
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
 
     STATICFILES_DIRS = (
         STATIC_PATH,
@@ -156,8 +170,6 @@ class Dev(Base):
 
     STATIC_PATH = os.path.join(BASE_DIR, 'static/')
 
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
-
     STATICFILES_DIRS = (
         STATIC_PATH,
     )
@@ -177,7 +189,17 @@ class Prod(Base):
 
     DEBUG = False
 
+    THUMBNAIL_DEBUG = True
+
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
+
+    STATIC_PATH = os.path.join(BASE_DIR, 'staticroot/')
+
+    STATIC_URL = '/staticroot/'
+
+    STATICFILES_DIRS = (
+        STATIC_PATH,
+    )
 
     INSTALLED_APPS = (
         'django.contrib.admin',
@@ -193,4 +215,5 @@ class Prod(Base):
     )
 
 
-    ALLOWED_HOSTS = ['local_host', ]
+    ALLOWED_HOSTS = ['localhost', '.ec2-54-69-236-218.us-west-2.compute.amazonaws.com']
+    # ALLOWED_HOSTS.append('*')
