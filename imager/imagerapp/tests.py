@@ -596,8 +596,7 @@ class ImagerappBadUser(LiveServerTestCase):
         self.user.profile.save()
 
     def tearDown(self):
-        self.driver.refresh()
-        time.sleep(3)
+        self.driver.implicitly_wait(4)
         self.driver.quit()
 
     def test_profile_redirect(self):
@@ -621,7 +620,8 @@ class ImagerappBadUser(LiveServerTestCase):
         other.save()
         other.profile.phone = 7654321
         other.profile.save()
-        self.client.login(username='guy', password='something')
+
+        self.login('guy', 'something')
 
         self.driver.get(self.live_server_url + reverse('edit_photo', kwargs={'pk': photo.pk}))
         self.assertIn('Log in', self.driver.page_source)
@@ -637,8 +637,8 @@ class ImagerappBadUser(LiveServerTestCase):
         other.profile.phone = 7654321
         other.profile.save()
 
-        self.driver.get(self.live_server_url + reverse('home'))
-        self.client.login(username='guy', password='something')
+        self.login('guy', 'something')
+
         self.driver.get(self.live_server_url + reverse('library', kwargs={'pk': self.user.profile.pk}))
         self.assertIn('Log in', self.driver.page_source)
 
@@ -647,3 +647,8 @@ class ImagerappBadUser(LiveServerTestCase):
         self.driver.find_element_by_id('id_username').send_keys('hi')
         self.driver.find_element_by_id('id_password').send_keys('wrong')
         self.driver.find_element_by_tag_name('form').submit()
+
+    def login(self, user, password):
+        self.driver.get(self.live_server_url + reverse('auth_login'))
+        namefield = self.driver.find_element_by_id('id_username').send_keys(user)
+        passfield = self.drvier.find_element_by_id('id_password').send_keys(password)
