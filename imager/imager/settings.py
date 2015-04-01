@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from secret import DATABASES
 
 from configurations import Configuration
 
@@ -177,7 +178,9 @@ class Prod(Base):
 
     DEBUG = False
 
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
+    DATABASES = DATABASES
+
+    STATIC_URL = 'staticroot/'
 
     INSTALLED_APPS = (
         'django.contrib.admin',
@@ -193,4 +196,4 @@ class Prod(Base):
     )
 
 
-    ALLOWED_HOSTS = ['local_host', ]
+    ALLOWED_HOSTS = ['ec2-54-69-236-218.us-west-2.compute.amazonaws.com', ]
