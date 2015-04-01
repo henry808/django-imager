@@ -7,7 +7,7 @@
         {% if user.is_authenticated %}
             <h3>User: {{ user.username }}</h3>
         {% endif %}
-        <link rel="stylesheet" type="text/css" href="../../static/style.css" />
+        <link rel="stylesheet" type="text/css" href='{{ STATIC_URL }}style.css'/>
     </head>
     <body>
     <header>
