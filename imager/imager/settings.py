@@ -69,34 +69,6 @@ class Base(Configuration):
     LOGIN_REDIRECT_URL = '/'  # The page you want users to arrive at after they successful log in
     LOGIN_URL = '/accounts/login/'
 
-    # Database
-    # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'imager',
-            'USER': 'JustinKan',
-            'PASSWORD': '',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-        }
-    }
-
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #         'NAME': 'imager',
-    #         'USER': 'postgres',
-    #         'PASSWORD': 'admin',
-    #         'HOST': '127.0.0.1',
-    #         'PORT': '5432',
-    #     }
-    # }
-
-    # Internationalization
-    # https://docs.djangoproject.com/en/1.7/topics/i18n/
-
     LANGUAGE_CODE = 'en-us'
 
     TIME_ZONE = 'US/Pacific'
@@ -149,7 +121,34 @@ class Dev(Base):
 #        'debug_toolbar',
         'sorl.thumbnail',
     )
+    
+   # Database
+    # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'imager',
+            'USER': 'JustinKan',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }
+
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'NAME': 'imager',
+    #         'USER': 'postgres',
+    #         'PASSWORD': 'admin',
+    #         'HOST': '127.0.0.1',
+    #         'PORT': '5432',
+    #     }
+    # }
+
+    # Internationalization
+    # https://docs.djangoproject.com/en/1.7/topics/i18n/
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
@@ -178,7 +177,7 @@ class Prod(Base):
 
     DEBUG = False
 
-    DATABASES = DATABASES
+    DATABASES = os.environ.get('DATABASE_URL', DATABASES)
 
     STATIC_URL = 'staticroot/'
 
