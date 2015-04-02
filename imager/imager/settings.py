@@ -198,4 +198,5 @@ class Prod(Base):
     )
 
 
-    ALLOWED_HOSTS = ['ec2-54-69-236-218.us-west-2.compute.amazonaws.com', ]
+    ALLOWED_HOSTS = ['ec2-54-69-236-218.us-west-2.compute.amazonaws.com',
+                     'ec2-54-68-234-113.us-west-2.compute.amazonaws.com', ]
