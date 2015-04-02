@@ -178,7 +178,7 @@ class Prod(Base):
 
     DEBUG = False
 
-    DATABASES = os.environ.get('DATABASE_URL')
+    DATABASES = {'default': os.environ.get('DATABASE_URL')}
 
     STATIC_URL = 'staticroot/'
 
