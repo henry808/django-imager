@@ -117,6 +117,8 @@ class Base(Configuration):
         STATIC_PATH,
     )
 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
+
     # Generates url fields to media files.
     MEDIA_URL = '/media/'
 
@@ -158,8 +160,6 @@ class Dev(Base):
     STATIC_URL = '/static/'
 
     STATIC_PATH = os.path.join(BASE_DIR, 'static/')
-
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
 
     STATICFILES_DIRS = (
         STATIC_PATH,
