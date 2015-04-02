@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from secret import DATABASES
 
 from configurations import Configuration
 
@@ -177,7 +176,7 @@ class Prod(Base):
 
     DEBUG = False
 
-    DATABASES = os.environ.get('DATABASE_URL', DATABASES)
+    DATABASES = os.environ.get('DATABASE_URL')
 
     STATIC_URL = 'staticroot/'
 
