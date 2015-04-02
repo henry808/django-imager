@@ -32,6 +32,8 @@ class Base(Configuration):
 
     TEMPLATE_DEBUG = True
 
+    THUMBNAIL_DEBUG = True
+
     ALLOWED_HOSTS = []
 
     # Application definition
@@ -136,6 +138,10 @@ class Dev(Base):
 
     DEBUG = True
 
+    TEMPLATE_DEBUG = True
+
+    THUMBNAIL_DEBUG = True
+
     INSTALLED_APPS = (
         'django.contrib.admin',
         'django.contrib.auth',
@@ -178,7 +184,13 @@ class Dev(Base):
 
 class Prod(Base):
 
-    DEBUG = False
+    DEBUG = True
+
+    TEMPLATE_DEBUG = True
+
+    THUMBNAIL_DEBUG = True
+
+    raise Exception(os.environ.get('DATABASE_URL'))
 
     DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
 
