@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+import dj_database_url
+
 from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -178,7 +180,7 @@ class Prod(Base):
 
     DEBUG = False
 
-    DATABASES = {'default': os.environ.get('DATABASE_URL')}
+    DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
 
     STATIC_URL = 'staticroot/'
 
