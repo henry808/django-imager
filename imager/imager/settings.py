@@ -182,7 +182,7 @@ class Prod(Base):
 
     DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
 
-    STATIC_URL = 'staticroot/'
+    STATIC_URL = '/staticroot/'
 
     INSTALLED_APPS = (
         'django.contrib.admin',
