@@ -5,15 +5,15 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <link rel="icon" href="../../favicon.ico">
+        <meta name="description" content="Web Application for Uploading Images and Creating Albums">
+        <meta name="author" content="Henry Grantham and Matthew Lee">
+        <link rel="icon" href="{{ STATIC_URL }}images/favicon.ico">
 
         <!-- Bootstrap core CSS -->
-        <link href="{{ STATIC_URL }}/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
 
         <!-- Custom styles for this template -->
-        <link href="{{ STATIC_URL }}/css/starter-template.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/imager.css" rel="stylesheet">
 
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -52,7 +52,7 @@
             </div>
         </nav>
         <div class="container">
-            <div class="starter-template">
+            <div class="imager-template">
 
                 {% if user.is_authenticated %}
                     <h3 class="lead">User: {{ user.username }}</h3>
@@ -66,7 +66,7 @@
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script src="{{ STATIC_URL }}/js/bootstrap.min.js"></script>
+ <!--        <script src="{{ STATIC_URL }}/js/bootstrap.min.js"></script> -->
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <!--         <script src="{{ STATIC_URL }}/js/ie10-viewport-bug-workaround.js"></script> -->
     </body>
