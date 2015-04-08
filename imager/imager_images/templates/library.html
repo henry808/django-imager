@@ -3,7 +3,7 @@
     {% if user.is_authenticated %}
         {% load photo_extras %}
         {% load thumbnail %}
-        <div>
+        <div id="library">
             <h4>Library View</h4>
             <li><a href="{% url 'upload_photo' %}">Upload new photo</a></li>
             <li><a href="{% url 'create_album' %}">Create new album</a></li>

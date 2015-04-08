@@ -9,13 +9,11 @@
         <meta name="author" content="">
         <link rel="icon" href="../../favicon.ico">
 
-        <title>Starter Template for Bootstrap</title>
-
         <!-- Bootstrap core CSS -->
         <link href="{{ STATIC_URL }}/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom styles for this template -->
-        <link href="starter-template.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}/css/starter-template.css" rel="stylesheet">
 
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -25,8 +23,6 @@
         <![endif]-->
         {% block title %}
         {% endblock %}
-
-        <!-- <link rel="stylesheet" type="text/css" href='{{ STATIC_URL }}style.css'/> -->
     </head>
     <body>
         <header>
@@ -44,7 +40,7 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                   <ul class="nav navbar-nav">
-                        <li class="active"><a href='{% url 'imager.views.home' %}'>Home</a></li>
+                        <li><a href='{% url 'imager.views.home' %}'>Home</a></li>
                     {% if user.is_authenticated %}
                         <li><a href="{% url 'stream' user.profile.pk %}">Stream</a></li>
                         <li><a href="{% url 'library' user.profile.pk %}">Library</a></li>
@@ -59,7 +55,6 @@
             <div class="starter-template">
 
                 {% if user.is_authenticated %}
-                    <h3>Test</h3>
                     <h3 class="lead">User: {{ user.username }}</h3>
                 {% endif %}
                 <p class="lead">Upload your photos to Imager and create your own albums.</p>
@@ -73,6 +68,16 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="{{ STATIC_URL }}/js/bootstrap.min.js"></script>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="{{ STATIC_URL }}/js/ie10-viewport-bug-workaround.js"></script>
+<!--         <script src="{{ STATIC_URL }}/js/ie10-viewport-bug-workaround.js"></script> -->
     </body>
 </html>
+<script type="text/javascript">
+    $(function () {
+        console.log('loading in active')
+        $("#index").parent().find("a:contains('Home')").parent().addClass('active');
+        $("#profile").parent().find("a:contains('Profile')").parent().addClass('active');
+        $("#library").parent().find("a:contains('Library')").parent().addClass('active');
+        $("#stream").parent().find("a:contains('Stream')").parent().addClass('active');
+     });
+</script>
+
