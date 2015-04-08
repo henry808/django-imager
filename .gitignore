@@ -46,6 +46,7 @@ coverage.xml
 
 # Django stuff:
 *.log
+migrations/
 
 # Sphinx documentation
 docs/_build/
@@ -53,5 +54,5 @@ docs/_build/
 # PyBuilder
 target/
 
-# Stupid things
+# Deployment
 fabfile.py
