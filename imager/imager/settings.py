@@ -48,7 +48,6 @@ class Base(Configuration):
         'imagerapp',
         'imager_images',
         'registration',
-#        'debug_toolbar',
         'sorl.thumbnail',
     )
 
@@ -63,7 +62,6 @@ class Base(Configuration):
     )
 
     # Database
-    # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
     DATABASES = {
         'default': {
@@ -210,3 +208,10 @@ class Prod(Base):
 
     ALLOWED_HOSTS = ['ec2-54-69-236-218.us-west-2.compute.amazonaws.com',
                      'ec2-54-68-234-113.us-west-2.compute.amazonaws.com', ]
+
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 25
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.environ.get('HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.environ.get('HOST_USER', '')
