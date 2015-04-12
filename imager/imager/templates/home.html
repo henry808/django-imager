@@ -4,6 +4,7 @@
     </title>
 {% endblock %}
 {% block body %}
+<div id="index">
     <header>
         {% if not user.is_authenticated %}
             <div class='login'>
@@ -20,4 +21,5 @@
     <div>
         <img src="{{ image_location }}{{ random_image }}">
     </div>
+</div>
 {% endblock %}

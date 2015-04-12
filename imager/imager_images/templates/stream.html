@@ -2,7 +2,7 @@
 {% block body %}
     {% if user.is_authenticated %}
     {% load photo_extras %}
-    <div>
+    <div id="stream">
         <h3>Stream View</h3>
         <ul>
             <li>Username: {{ user.username }}</li>

@@ -10,7 +10,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from secret import DATABASES
+
+import dj_database_url
 
 from configurations import Configuration
 
@@ -31,6 +32,8 @@ class Base(Configuration):
 
     TEMPLATE_DEBUG = True
 
+    THUMBNAIL_DEBUG = True
+
     ALLOWED_HOSTS = []
 
     # Application definition
@@ -45,7 +48,6 @@ class Base(Configuration):
         'imagerapp',
         'imager_images',
         'registration',
-#        'debug_toolbar',
         'sorl.thumbnail',
     )
 
@@ -58,6 +60,30 @@ class Base(Configuration):
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     )
+
+    # Database
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'imager',
+            'USER': 'JustinKan',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }
+
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'NAME': 'imager',
+    #         'USER': 'postgres',
+    #         'PASSWORD': 'admin',
+    #         'HOST': '127.0.0.1',
+    #         'PORT': '5432',
+    #     }
+    # }
 
     ROOT_URLCONF = 'imager.urls'
 
@@ -91,6 +117,8 @@ class Base(Configuration):
         STATIC_PATH,
     )
 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
+
     # Generates url fields to media files.
     MEDIA_URL = '/media/'
 
@@ -98,15 +126,16 @@ class Base(Configuration):
 
     TEMPLATE_DIRS =[ os.path.join(BASE_DIR, 'imager/templates')]
 
-    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = 'tmp/activation'
-
 
 class Dev(Base):
 
     BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
     DEBUG = True
+
+    TEMPLATE_DEBUG = True
+
+    THUMBNAIL_DEBUG = True
 
     INSTALLED_APPS = (
         'django.contrib.admin',
@@ -122,30 +151,7 @@ class Dev(Base):
         'sorl.thumbnail',
     )
     
-   # Database
-    # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'imager',
-            'USER': 'JustinKan',
-            'PASSWORD': '',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-        }
-    }
-
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #         'NAME': 'imager',
-    #         'USER': 'postgres',
-    #         'PASSWORD': 'admin',
-    #         'HOST': '127.0.0.1',
-    #         'PORT': '5432',
-    #     }
-    # }
 
     # Internationalization
     # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -155,8 +161,6 @@ class Dev(Base):
     STATIC_URL = '/static/'
 
     STATIC_PATH = os.path.join(BASE_DIR, 'static/')
-
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
 
     STATICFILES_DIRS = (
         STATIC_PATH,
@@ -175,11 +179,15 @@ class Dev(Base):
 
 class Prod(Base):
 
-    DEBUG = False
+    DEBUG = True
 
-    DATABASES = os.environ.get('DATABASE_URL', DATABASES)
+    TEMPLATE_DEBUG = True
 
-    STATIC_URL = 'staticroot/'
+    THUMBNAIL_DEBUG = True
+
+    DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
+
+    STATIC_URL = '/staticroot/'
 
     INSTALLED_APPS = (
         'django.contrib.admin',
@@ -195,4 +203,14 @@ class Prod(Base):
     )
 
 
-    ALLOWED_HOSTS = ['ec2-54-69-236-218.us-west-2.compute.amazonaws.com', ]
+    ALLOWED_HOSTS = ['ec2-54-69-236-218.us-west-2.compute.amazonaws.com',
+                     'ec2-54-68-234-113.us-west-2.compute.amazonaws.com', ]
+
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 25
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.environ.get('HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.environ.get('HOST_USER', '')

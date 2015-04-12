@@ -3,7 +3,7 @@
     {% if user.is_authenticated %}
         {% load photo_extras %}
         {% load thumbnail %}
-        <div>
+        <div id="library">
             <h4>Library View</h4>
             <li><a href="{% url 'upload_photo' %}">Upload new photo</a></li>
             <li><a href="{% url 'create_album' %}">Create new album</a></li>
@@ -15,7 +15,7 @@
                         {% thumbnail photo.picture "80x80" as im %}
                             <img src="{{ im.url }}">
                         {% empty %}
-                            <p>No image: {{ im.url }}</p>
+                            <p>No image: {{ im }} {{ im.url }}</p>
                         {% endthumbnail %}
                         {% if photo.user = user %}
                             <p><a href="{% url 'edit_photo' photo.pk %}">Edit</a></p>

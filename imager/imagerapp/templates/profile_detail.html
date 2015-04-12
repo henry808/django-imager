@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
     {% if user.is_authenticated %}
-    <div>
+    <div id="profile">
         <h1>Profile Detail View</h1>
         <ul>
             <li>Username: {{ user.username }}</li>
